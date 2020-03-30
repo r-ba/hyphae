@@ -1,0 +1,26 @@
+{
+  "name": "hyphae",
+  "version": "0.0.1",
+  "license": "MIT",
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/r-ba/hyphae.git"
+  },
+  "bugs": {
+    "url": "https://github.com/r-ba/hyphae/issues"
+  },
+  "author": {
+    "name": "Rhys Balevicius",
+    "email": "rhysbalevicius@gmail.com"
+  },
+  "keywords": [],
+  "engines": {
+    "node": ">=8.12"
+  },
+  "main": "src/index.js",
+  "scripts": {},
+  "type": "module",
+  "dependencies": {},
+  "devDependencies": {}
+}
