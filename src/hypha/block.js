@@ -123,4 +123,14 @@ Block.prototype.defineStatements = function(statements) {
 };
 
 
+/**
+ * Define an instance's encapsulating Block
+ *
+ * @param {Block} parent
+ */
+Block.prototype.defineParent = function(parent) {
+  Object.setPrototypeOf(this, parent);
+};
+
+
 export default Block;
