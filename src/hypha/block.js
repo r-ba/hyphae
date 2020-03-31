@@ -1,4 +1,4 @@
-import Operations from './operations.js'
+import Operations from './operations.js';
 
 /**
  * Emulate a block statement.
@@ -75,23 +75,34 @@ Block.prototype.execute = async function() {
 
 
 /**
+ * Evaluate the next statement in the sequence.
+ *
+ * @param {number} current The current statements index.
+ * @param {number} last The total number of statements.
+ */
+Block.prototype.executeNext = async function(current, last) {
+  if (current < last) {
+    return Promise.resolve({
+      value : this.statements[current].execute(),
+      done : false
+    });
+  } else {
+    return Promise.resolve({ done : true });
+  }
+};
+
+
+/**
  * Define an asynchronous flow of execution such that the evaluation of
  * statement i is guaranteed to occur before statement j for all i < j.
  */
 Block.prototype[Symbol.asyncIterator] = function() {
-  let numStatements = this.statements.length;
-  let currStatement = 0;
+  let last = this.statements.length;
+  let current = 0;
 
   return {
-    next: () => {
-      if (currStatement < numStatements) {
-        return Promise.resolve({
-          value : this.statements[currStatement++].execute(),
-          done : false
-        });
-      } else {
-        return Promise.resolve({ done : true });
-      }
+    next: async () => {
+      return await this.executeNext(current++, last);
     }
   };
 };
@@ -108,7 +119,7 @@ Block.prototype.defineStatements = function(statements) {
     if (statement instanceof Block) {
       return statement;
     } else {
-      const execute = () => {
+      const execute = async () => {
         const { f, argv, to } = statement;
         let output = Operations[f](...this.collect(argv));
         this.assign(to, output);
