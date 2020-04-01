@@ -1,8 +1,8 @@
 {
   "name": "hyphae",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "license": "MIT",
-  "description": "",
+  "description": "A computational playground",
   "repository": {
     "type": "git",
     "url": "https://github.com/r-ba/hyphae.git"
@@ -18,9 +18,15 @@
   "engines": {
     "node": ">=8.12"
   },
+  "type":"module",
   "main": "src/index.js",
-  "scripts": {},
-  "type": "module",
+  "scripts": {
+    "build": "rollup -c",
+    "test": "mocha"
+  },
   "dependencies": {},
-  "devDependencies": {}
+  "devDependencies": {
+    "chai": "4.0.2",
+    "mocha": "^6.2.2"
+  }
 }
