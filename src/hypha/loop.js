@@ -11,7 +11,7 @@ import Operations from './operations.js';
 function LoopBlock(parent, statements=[], conditions=[]) {
   this.body = new Block(parent, {}, statements);
   this.conditions = conditions;
-};
+}
 
 
 /**
