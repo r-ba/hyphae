@@ -11,14 +11,14 @@ function ConditionalBlock(parent, statements=[], conditions=[]) {
   this.parent = parent;
   this.statements = statements;
   this.conditions = conditions;
-};
+}
 
 
 /**
  * Execute the first statement whose corresponding condition evaulates to true.
  */
 ConditionalBlock.prototype.execute = async function() {
-  for await (const statement of this) {};
+  for await (const output of this) {} // eslint-disable-line
 };
 
 

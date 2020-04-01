@@ -13,7 +13,7 @@ function Block(parent = null, scope = {}, statements = []) {
   }
   this.scope = scope;
   this.defineStatements(statements);
-};
+}
 
 
 /**
@@ -63,14 +63,14 @@ Block.prototype.assign = function(property, value, origin = this) {
  */
 Block.prototype.collect = function(properties) {
   return properties.map(property => this.get(property));
-}
+};
 
 
 /**
  * Evaluate a sequence of statements with respect to their ordering.
  */
 Block.prototype.execute = async function() {
-  for await (const statementOutput of this) {};
+  for await (let output of this) {} // eslint-disable-line
 };
 
 
@@ -124,7 +124,7 @@ Block.prototype.defineStatements = function(statements) {
         let output = Operations[f](...this.collect(argv));
         this.assign(to, output);
         return output;
-      }
+      };
 
       return {
         execute : execute.bind(this)
