@@ -12,6 +12,7 @@ function Block(parent = null, scope = {}, statements = []) {
     Object.setPrototypeOf(this, parent);
   }
   this.scope = scope;
+  this.statements = [];
   this.defineStatements(statements);
 }
 
@@ -116,21 +117,57 @@ Block.prototype[Symbol.asyncIterator] = function() {
  */
 Block.prototype.defineStatements = function(statements) {
   this.statements = statements.map(statement => {
-    if (statement instanceof Block) {
-      return statement;
-    } else {
-      const execute = async () => {
-        const { f, argv, to } = statement;
-        let output = Operations[f](...this.collect(argv));
-        this.assign(to, output);
-        return output;
-      };
-
-      return {
-        execute : execute.bind(this)
-      };
-    }
+    return this.standardizeStatement(statement);
   });
+};
+
+
+/**
+ * Standardize a non-Block statement.
+ *
+ * @param {object} statement A non-standardized statement.
+ */
+Block.prototype.standardizeStatement = function(statement) {
+  if (Object.keys(Object.getPrototypeOf(statement)).length) {
+    return statement;
+  } else {
+    const execute = async () => {
+      const { f, argv, to } = statement;
+      let output = Operations[f](...this.collect(argv));
+      this.assign(to, output);
+      return output;
+    };
+
+    return {
+      execute : execute.bind(this)
+    };
+  }
+};
+
+
+/**
+ * Insert a statement at the specified index.
+ *
+ * @param {number} index
+ * @param {object} statement
+ */
+Block.prototype.insertStatement = function(index, statement) {
+  const standardized = this.standardizeStatement(statement);
+  if (index > this.statements.length) {
+    this.statements.push(standardized);
+  } else {
+    this.statements.splice(index, 0, standardized);
+  }
+};
+
+
+/**
+ * Delete a statement at the specified index.
+ *
+ * @param {number} index
+ */
+Block.prototype.deleteStatement = function(index) {
+  this.statements.splice(index, 1);
 };
 
 
