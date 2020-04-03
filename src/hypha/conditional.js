@@ -75,4 +75,46 @@ ConditionalBlock.prototype.isDescendantOf = function(block) {
 };
 
 
+/**
+ * Insert a statement at the specified index.
+ *
+ * @param {number} index
+ * @param {object} statement
+ */
+ConditionalBlock.prototype.insertStatement = function(index, statement) {
+  this.statements.splice(index, 0, statement);
+};
+
+
+/**
+ * Delete a statement at the specified index.
+ *
+ * @param {number} index
+ */
+ConditionalBlock.prototype.deleteStatement = function(index) {
+  this.statements.splice(index, 1);
+};
+
+
+/**
+ * Insert a condition at the specified index.
+ *
+ * @param {number} index
+ * @param {object} condition
+ */
+ConditionalBlock.prototype.insertCondition = function(index, condition) {
+  this.conditions.splice(index, 0, condition);
+};
+
+
+/**
+ * Delete a condition at the specified index.
+ *
+ * @param {number} index
+ */
+ConditionalBlock.prototype.deleteCondition = function(index) {
+  this.conditions.splice(index, 1);
+};
+
+
 export default ConditionalBlock;
