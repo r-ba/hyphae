@@ -36,4 +36,22 @@ LoopBlock.prototype.checkCondition = async function() {
 };
 
 
+/**
+ * Check whether a given Block is an ancestor of this.
+ *
+ * @param {Block} block The potential ancestor.
+ * @return {boolean}
+ */
+LoopBlock.prototype.isDescendantOf = function(block) {
+  let ancestor = Object.getPrototypeOf(this.body);
+  while (ancestor !== null) {
+    if (ancestor === block) {
+      return true;
+    }
+    ancestor = Object.getPrototypeOf(ancestor);
+  }
+  return false;
+};
+
+
 export default LoopBlock;

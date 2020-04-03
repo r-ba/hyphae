@@ -57,4 +57,22 @@ ConditionalBlock.prototype[Symbol.asyncIterator] = function() {
 };
 
 
+/**
+ * Check whether a given Block is an ancestor of this.
+ *
+ * @param {Block} block The potential ancestor.
+ * @return {boolean}
+ */
+ConditionalBlock.prototype.isDescendantOf = function(block) {
+  let ancestor = Object.getPrototypeOf(this.parent);
+  while (ancestor !== null) {
+    if (ancestor === block) {
+      return true;
+    }
+    ancestor = Object.getPrototypeOf(ancestor);
+  }
+  return false;
+};
+
+
 export default ConditionalBlock;

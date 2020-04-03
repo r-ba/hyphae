@@ -135,12 +135,30 @@ Block.prototype.defineStatements = function(statements) {
 
 
 /**
- * Define an instance's encapsulating Block
+ * Define an instance's encapsulating Block.
  *
  * @param {Block} parent
  */
 Block.prototype.defineParent = function(parent) {
   Object.setPrototypeOf(this, parent);
+};
+
+
+/**
+ * Check whether a given Block is an ancestor of this.
+ *
+ * @param {Block} block The potential ancestor.
+ * @return {boolean}
+ */
+Block.prototype.isDescendantOf = function(block) {
+  let ancestor = Object.getPrototypeOf(this);
+  while (ancestor !== null) {
+    if (ancestor === block) {
+      return true;
+    }
+    ancestor = Object.getPrototypeOf(ancestor);
+  }
+  return false;
 };
 
 
