@@ -6,28 +6,23 @@
  */
 function Node(type, position) {
 
-  // Add instance to local store
-  nodeStore[type].push(this); // This might be unnecessary -- to be determined
-
   // Generate unique id
   this.id = generateId();
+
+  // Add instance to local store
+  NodeStore[type][this.id] = this;
 
   // Create corresponding Cytoscape node instance
   this.cyInstance = cy.add({
     group : 'nodes',
     data : {
       id : this.id,
-      type : type
+      type : type,
+      handleable : true
     },
     position : position,
     classes : [ type ],
   });
-
-  /*
-   After inheriting from this class:
-   Extended classes instantiate corresponding Hyphae object, and
-   adjoin the required "connector" nodes
-  */
 }
 
 
