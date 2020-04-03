@@ -152,12 +152,7 @@ Block.prototype.standardizeStatement = function(statement) {
  * @param {object} statement
  */
 Block.prototype.insertStatement = function(index, statement) {
-  const standardized = this.standardizeStatement(statement);
-  if (index > this.statements.length) {
-    this.statements.push(standardized);
-  } else {
-    this.statements.splice(index, 0, standardized);
-  }
+  this.statements.splice(index, 0, this.standardizeStatement(statement));
 };
 
 
