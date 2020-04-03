@@ -54,4 +54,46 @@ LoopBlock.prototype.isDescendantOf = function(block) {
 };
 
 
+/**
+ * Insert a statement at the specified index.
+ *
+ * @param {number} index
+ * @param {object} statement
+ */
+LoopBlock.prototype.insertStatement = function(index, statement) {
+  this.body.insertStatement(index, statement);
+};
+
+
+/**
+ * Delete a statement at the specified index.
+ *
+ * @param {number} index
+ */
+LoopBlock.prototype.deleteStatement = function(index) {
+  this.body.deleteStatement(index);
+};
+
+
+/**
+ * Insert a condition at the specified index.
+ *
+ * @param {number} index
+ * @param {object} condition
+ */
+LoopBlock.prototype.insertCondition = function(index, condition) {
+  this.conditions.splice(index, 0, condition);
+};
+
+
+/**
+ * Delete a condition at the specified index.
+ *
+ * @param {number} index
+ */
+LoopBlock.prototype.deleteCondition = function(index) {
+  this.conditions.splice(index, 1);
+};
+
+
 export default LoopBlock;
