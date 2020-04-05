@@ -40,3 +40,41 @@ LoopNode.prototype = Object.create(Node.prototype);
 
 // Set the constructor to return a BlockNode object
 LoopNode.prototype.constructor = LoopNode;
+
+
+/**
+ * Add a connector-type node to the UI:
+ * Used to permit incoming edges from other Node objects.
+ */
+LoopNode.prototype.addConnector = function() {
+ const numConnectors = this.connectors.length;
+ const statementId = `${this.id}_S${numConnectors}`;
+
+  const connector = cy.add({
+    nodes : [
+      {
+        data : {
+          id : statementId,
+          index : numConnectors,
+          targetId : this.id,
+          targetType : 'loop',
+          connected : false,
+          midPoint : false,
+          type : 'connector'
+        },
+        position : this.getOffsetPosition(0, -100),
+        classes : [ 'connector' ]
+      }
+    ],
+    edges : [
+      {
+        data : {
+          source : statementId,
+          target : `${this.id}_C`
+        }
+      }
+    ]
+  });
+
+  this.connectors.push(connector);
+};
