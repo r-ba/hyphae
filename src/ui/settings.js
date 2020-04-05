@@ -1,6 +1,8 @@
-const container = document.querySelector('#cy');
+const container = document.getElementById('cy');
 const cy = cytoscape({
   container: container,
+  zoomingEnabled: false,
+  panningEnabled: false,
   style: cytoscape.stylesheet()
     .selector('node')
       .css({
@@ -17,6 +19,11 @@ const cy = cytoscape({
         'line-color': 'grey',
         'width': 3
       })
+    .selector('.connector')
+      .css({
+        'height': 10,
+        'width': 10,
+      })
     .selector('.main')
       .css({
         'height': 250,
@@ -29,30 +36,26 @@ const cy = cytoscape({
       })
     .selector('.operation')
       .css({
-        'height': 25,
-        'width': 25
-      })
-    .selector('.connector')
-      .css({
-        'height': 10,
-        'width': 10,
+        'background-image': disk,
+        'height': 40,
+        'width': 40
       })
     .selector('.block')
       .css({
-        'background-image': 'https://i.ibb.co/Wn0TdMM/block.png',
+        'background-image': square,
         'height': 40,
         'width': 40,
         'cursor' : 'pointer'
       })
-    .selector('.if')
+    .selector('.conditional')
       .css({
-        'background-image': 'https://i.ibb.co/gJqV51B/triangle.png',
+        'background-image': triangle,
         'height': 40,
         'width': 40
       })
     .selector('.loop')
       .css({
-        'background-image': 'https://i.ibb.co/bPDxWYj/circle.png',
+        'background-image': circle,
         'height': 40,
         'width': 40
       })
@@ -62,29 +65,23 @@ const cy = cytoscape({
         'height': 10,
         'background-color': '#ffffff'
       })
-})
-.zoomingEnabled(false)
-.panningEnabled(false);
+});
 
-// https://github.com/cytoscape/cytoscape.js-edgehandles
+
+/*
+   Edge creation ui extension configuration
+   https://github.com/cytoscape/cytoscape.js-edgehandles
+*/
 cy.edgehandles({
   preview: false,
-  handleNodes: 'node[handle = 1]',
+  handleNodes: 'node[?handleable]',
   noEdgeEventsInDraw: false,
   disableBrowserGestures: true,
-  handlePosition: function( node ){
+  handlePosition: function(node){
     return 'middle top';
   },
-  // edgeParams: function( sourceNode, targetNode, i ){ // return element object to be passed to cy.add() for edge
-  //   return {};
-  // },
-  complete: function( sourceNode, targetNode, addedEles ){ // fired when edgehandles is done and elements are added
-    const targetType = targetNode.data().type;
-
-    if (targetType !== 'connector') {
-      cy.remove(addedEles);
-    } else {
-      
-    }
+  complete: function(sourceNode, targetNode, addedEles){
+    const { type, id } = sourceNode.data();
+    NodeStore[type][id].connectNode(targetNode, addedEles);
   }
 });
