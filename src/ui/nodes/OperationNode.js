@@ -57,3 +57,50 @@ OperationNode.prototype.defineOperation = function(f) {
     edges : edges
   });
 };
+
+
+/**
+ * Setup the appropriate logic between this node and some source node, if applicable.
+ *
+ * @param {object} target The Cytoscape target node.
+ * @param {object} edge The added Cytoscape edge object added.
+ */
+OperationNode.prototype.connectNode = function(target, edge) {
+  const {
+    id,
+    type,
+    index,
+    connected,
+    targetType,
+    targetId
+  } = target.data();
+  let invalidConnection = true;
+
+  if (type === 'data') {
+    const { to } = this.options;
+    if (to !== '' && to !== id) {
+      cy.remove(`edge[source="${this.id}"][target="${this.options.to}"]`);
+    }
+    if (to !== id) invalidConnection = false;
+    this.options.to = id;
+  } else if (type === 'connector' && !connected) {
+    if (targetType === 'block') {
+      const statement = NodeStore[targetType][targetId].statements[index];
+      if (statement === undefined) {
+        NodeStore[targetType][targetId].statements.splice(index, 0, this.id);
+        NodeStore[targetType][targetId].addConnector();
+        invalidConnection = false;
+      }
+    }
+    // To-do: Handle `conditional` and `loop` connections
+    // else if (targetType === 'conditional') {
+    //
+    // } else if (targetType === 'loop') {
+    //
+    // }
+  }
+
+  if (invalidConnection) {
+    cy.remove(edge);
+  }
+};
