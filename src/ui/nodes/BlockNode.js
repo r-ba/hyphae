@@ -7,6 +7,8 @@ function BlockNode(position) {
   Node.call(this, 'block', position);
 
   this.hyphaeInstance = new Block();
+  this.scope = [];
+  this.statements = [];
   this.connectors = [];
   this.addConnector();
 }
@@ -31,8 +33,8 @@ BlockNode.prototype.addConnector = function() {
         data : {
           id : id,
           index : numConnectors,
-          parentId : this.id,
-          parentType : 'block',
+          targetId : this.id,
+          targetType : 'block',
           connected : false,
           handleable : false,
           type : 'connector'
@@ -41,7 +43,6 @@ BlockNode.prototype.addConnector = function() {
         classes : [ 'connector' ]
       }
     ],
-
     edges : [
       {
         data : {
@@ -53,4 +54,45 @@ BlockNode.prototype.addConnector = function() {
   });
 
   this.connectors.push(connector);
+};
+
+
+/**
+ * Setup the appropriate logic between this node and some source node, if applicable.
+ *
+ * @param {object} target The Cytoscape target node.
+ * @param {object} edge The Cytoscape edge object added.
+ */
+BlockNode.prototype.connectNode = function(target, edge) {
+  const {
+    id,
+    type,
+    index,
+    connected,
+    targetType,
+    targetId
+  } = target.data();
+  let invalidConnection = true;
+
+  if (type === 'connector' && !connected && targetId !== this.id) {
+    if (targetType === 'block') {
+      if (!NodeStore[targetType][targetId].hyphaeInstance.isDescendantOf(this.hyphaeInstance)) {
+        this.hyphaeInstance.defineParent(NodeStore[targetType][targetId].hyphaeInstance);
+        NodeStore[targetType][targetId].statements.splice(index, 0, this.id);
+        NodeStore[targetType][targetId].addConnector();
+        cy.getElementById(this.id).data('handleable', false);
+        invalidConnection = false;
+      }
+    }
+    // To-do: Handle `conditional` and `loop` connections
+    // else if (targetType === 'conditional') {
+    //
+    // } else if (targetType === 'loop') {
+    //
+    // }
+  }
+
+  if (invalidConnection) {
+    cy.remove(edge);
+  }
 };
