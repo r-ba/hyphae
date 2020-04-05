@@ -78,3 +78,51 @@ LoopNode.prototype.addConnector = function() {
 
   this.connectors.push(connector);
 };
+
+
+/**
+ * Setup the appropriate logic between this node and some source node, if applicable.
+ *
+ * @param {object} target The Cytoscape target node.
+ * @param {object} edge The Cytoscape edge object added.
+ */
+LoopNode.prototype.connectNode = function(target, edge) {
+  const {
+    type,
+    index,
+    midPoint,
+    connected,
+    targetType,
+    targetId
+  } = target.data();
+  let invalidConnection = true;
+
+  if (type === 'connector' && !connected && targetId !== this.id) {
+    if (targetType === 'block') {
+      if (!NodeStore[targetType][targetId].hyphaeInstance.isDescendantOf(this.hyphaeInstance)) {
+        this.hyphaeInstance.body.defineParent(NodeStore[targetType][targetId].hyphaeInstance);
+        NodeStore[targetType][targetId].statements.splice(index, 1, this.id);
+        NodeStore[targetType][targetId].addConnector();
+        cy.getElementById(this.id).data('handleable', false);
+        target.data('connected', true);
+        invalidConnection = false;
+      }
+
+    } else if (!midPoint) {
+      if (targetType === 'conditional' || targetType === 'loop') {
+        if (!NodeStore[targetType][targetId].hyphaeInstance.body.isDescendantOf(this.hyphaeInstance.body)) {
+          this.hyphaeInstance.body.defineParent(NodeStore[targetType][targetId].hyphaeInstance.body);
+          NodeStore[targetType][targetId].statements.splice(index, 1, this.id);
+          NodeStore[targetType][targetId].addConnector();
+          cy.getElementById(this.id).data('handleable', false);
+          target.data('connected', true);
+          invalidConnection = false;
+        }
+      }
+    }
+  }
+
+  if (invalidConnection) {
+    cy.remove(edge);
+  }
+};
