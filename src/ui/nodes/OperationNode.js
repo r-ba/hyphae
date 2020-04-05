@@ -38,7 +38,6 @@ OperationNode.prototype.defineOperation = function(f) {
         targetId : this.id,
         targetType : 'operation',
         connected : false,
-        handleable : false,
         type : 'connector'
       },
       position : this.getOffsetPosition(50 - 50 * i, -75),
@@ -70,6 +69,7 @@ OperationNode.prototype.connectNode = function(target, edge) {
     id,
     type,
     index,
+    midPoint,
     connected,
     targetType,
     targetId
@@ -87,17 +87,30 @@ OperationNode.prototype.connectNode = function(target, edge) {
     if (targetType === 'block') {
       const statement = NodeStore[targetType][targetId].statements[index];
       if (statement === undefined) {
-        NodeStore[targetType][targetId].statements.splice(index, 0, this.id);
+        NodeStore[targetType][targetId].statements.splice(index, 1, this.id);
         NodeStore[targetType][targetId].addConnector();
+        target.data('connected', true);
+        invalidConnection = false;
+      }
+    } else if (midPoint) {
+      if (targetType === 'conditional') {
+        NodeStore[targetType][targetId].conditions.splice(index, 1, this.id);
+        target.data('connected', true);
+        invalidConnection = false;
+      } else if (targetType === 'loop') {
+        if (NodeStore[targetType][targetId].conditions.indexOf(this.id) === -1) {
+          NodeStore[targetType][targetId].conditions.push(this.id);
+          invalidConnection = false;
+        }
+      }
+    } else {
+      if (targetType === 'conditional' || targetType === 'loop') {
+        NodeStore[targetType][targetId].statements.splice(index, 1, this.id);
+        NodeStore[targetType][targetId].addConnector();
+        target.data('connected', true);
         invalidConnection = false;
       }
     }
-    // To-do: Handle `conditional` and `loop` connections
-    // else if (targetType === 'conditional') {
-    //
-    // } else if (targetType === 'loop') {
-    //
-    // }
   }
 
   if (invalidConnection) {
