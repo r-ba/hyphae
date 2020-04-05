@@ -36,10 +36,9 @@ BlockNode.prototype.addConnector = function() {
           targetId : this.id,
           targetType : 'block',
           connected : false,
-          handleable : false,
           type : 'connector'
         },
-        position : this.getOffsetPosition(0, -75), // To-do: make this positioning intelligent
+        position : this.getOffsetPosition(0, -75),
         classes : [ 'connector' ]
       }
     ],
@@ -58,16 +57,16 @@ BlockNode.prototype.addConnector = function() {
 
 
 /**
- * Setup the appropriate logic between this node and some source node, if applicable.
+ * Setup the appropriate logic between this node and some target node, if applicable.
  *
  * @param {object} target The Cytoscape target node.
  * @param {object} edge The Cytoscape edge object added.
  */
 BlockNode.prototype.connectNode = function(target, edge) {
   const {
-    id,
     type,
     index,
+    midPoint,
     connected,
     targetType,
     targetId
@@ -78,18 +77,25 @@ BlockNode.prototype.connectNode = function(target, edge) {
     if (targetType === 'block') {
       if (!NodeStore[targetType][targetId].hyphaeInstance.isDescendantOf(this.hyphaeInstance)) {
         this.hyphaeInstance.defineParent(NodeStore[targetType][targetId].hyphaeInstance);
-        NodeStore[targetType][targetId].statements.splice(index, 0, this.id);
+        NodeStore[targetType][targetId].statements.splice(index, 1, this.id);
         NodeStore[targetType][targetId].addConnector();
         cy.getElementById(this.id).data('handleable', false);
+        target.data('connected', true);
         invalidConnection = false;
       }
+
+    } else if (!midPoint) {
+      if (targetType === 'conditional' || targetType === 'loop') {
+        if (!NodeStore[targetType][targetId].hyphaeInstance.isDescendantOf(this.hyphaeInstance)) {
+          this.hyphaeInstance.defineParent(NodeStore[targetType][targetId].hyphaeInstance.body);
+          NodeStore[targetType][targetId].statements.splice(index, 1, this.id);
+          NodeStore[targetType][targetId].addConnector();
+          cy.getElementById(this.id).data('handleable', false);
+          target.data('connected', true);
+          invalidConnection = false;
+        }
+      }
     }
-    // To-do: Handle `conditional` and `loop` connections
-    // else if (targetType === 'conditional') {
-    //
-    // } else if (targetType === 'loop') {
-    //
-    // }
   }
 
   if (invalidConnection) {
