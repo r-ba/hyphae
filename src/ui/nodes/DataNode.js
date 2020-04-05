@@ -36,7 +36,7 @@ DataNode.prototype.connectNode = function(target, edge) {
       NodeStore[targetType][targetId].options.argv[index] = this.id;
       target.data('connected', true);
       invalidConnection = false;
-    } else if (targetType === 'block' || targetType === 'loop') {
+    } else if (['block', 'loop', 'conditional'].indexOf(targetType) !== -1) {
       if (NodeStore[targetType][targetId].scope.indexOf(this.id) === -1) {
         NodeStore[targetType][targetId].scope.push(this.id);
         NodeStore[targetType][targetId].addConnector();
