@@ -1,3 +1,4 @@
+import Block from './block.js';
 import Operations from './operations.js';
 
 /**
@@ -8,8 +9,7 @@ import Operations from './operations.js';
  * @param {Array<object>=} conditions A sequence of n-1 conditional statements.
  */
 function ConditionalBlock(parent, statements=[], conditions=[]) {
-  this.parent = parent;
-  this.statements = statements;
+  this.body = new Block(parent, {}, statements);
   this.conditions = conditions;
 }
 
@@ -28,6 +28,7 @@ ConditionalBlock.prototype.execute = async function() {
  */
 ConditionalBlock.prototype[Symbol.asyncIterator] = function() {
   let last = this.conditions.length;
+  let lastStatement = this.body.statements.length;
   let current = -1;
 
   return {
@@ -35,9 +36,9 @@ ConditionalBlock.prototype[Symbol.asyncIterator] = function() {
       current += 1;
       if (current < last) {
         const { f, argv } = this.conditions[current];
-        if (Operations[f](...this.parent.collect(argv))) {
+        if (Operations[f](...this.body.collect(argv))) {
           return Promise.resolve({
-            value : await this.statements[current].execute(),
+            value : await this.body.executeNext(current, lastStatement),//this.statements[current].execute(),
             done : true
           });
         } else {
@@ -48,7 +49,7 @@ ConditionalBlock.prototype[Symbol.asyncIterator] = function() {
         }
       } else {
         return Promise.resolve({
-          value : await this.statements[current].execute(),
+          value : await this.body.executeNext(current, lastStatement),//this.statements[current].execute(),
           done : true
         });
       }
@@ -64,7 +65,7 @@ ConditionalBlock.prototype[Symbol.asyncIterator] = function() {
  * @return {boolean}
  */
 ConditionalBlock.prototype.isDescendantOf = function(block) {
-  let ancestor = Object.getPrototypeOf(this.parent);
+  let ancestor = Object.getPrototypeOf(this.body);
   while (ancestor !== null) {
     if (ancestor === block) {
       return true;
@@ -82,7 +83,7 @@ ConditionalBlock.prototype.isDescendantOf = function(block) {
  * @param {object} statement
  */
 ConditionalBlock.prototype.insertStatement = function(index, statement) {
-  this.statements.splice(index, 0, statement);
+  this.body.insertStatement(index, statement);
 };
 
 
@@ -92,7 +93,7 @@ ConditionalBlock.prototype.insertStatement = function(index, statement) {
  * @param {number} index
  */
 ConditionalBlock.prototype.deleteStatement = function(index) {
-  this.statements.splice(index, 1);
+  this.body.deleteStatement(index);
 };
 
 
@@ -103,7 +104,7 @@ ConditionalBlock.prototype.deleteStatement = function(index) {
  * @param {object} condition
  */
 ConditionalBlock.prototype.insertCondition = function(index, condition) {
-  this.conditions.splice(index, 0, condition);
+  this.conditions.splice(index, 1, condition);
 };
 
 

@@ -82,7 +82,7 @@ LoopBlock.prototype.deleteStatement = function(index) {
  * @param {object} condition
  */
 LoopBlock.prototype.insertCondition = function(index, condition) {
-  this.conditions.splice(index, 0, condition);
+  this.conditions.splice(index, 1, condition);
 };
 
 
