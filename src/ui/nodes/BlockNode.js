@@ -7,8 +7,6 @@ function BlockNode(position) {
   Node.call(this, 'block', position);
 
   this.hyphaeInstance = new Block();
-  this.scope = [];
-  this.statements = [];
   this.connectors = [];
   this.addConnector();
 }
@@ -79,7 +77,6 @@ BlockNode.prototype.connectNode = function(target, edge) {
     if (targetType === 'block') {
       if (!NodeStore[targetType][targetId].hyphaeInstance.isDescendantOf(this.hyphaeInstance)) {
         this.hyphaeInstance.defineParent(NodeStore[targetType][targetId].hyphaeInstance);
-        NodeStore[targetType][targetId].statements.splice(index, 1, this.id);
         NodeStore[targetType][targetId].addConnector();
         cy.getElementById(this.id).data('handleable', false);
         target.data('connected', true);
@@ -90,7 +87,6 @@ BlockNode.prototype.connectNode = function(target, edge) {
       if (targetType === 'conditional' || targetType === 'loop') {
         if (!NodeStore[targetType][targetId].hyphaeInstance.isDescendantOf(this.hyphaeInstance)) {
           this.hyphaeInstance.defineParent(NodeStore[targetType][targetId].hyphaeInstance.body);
-          NodeStore[targetType][targetId].statements.splice(index, 1, this.id);
           NodeStore[targetType][targetId].addConnector();
           cy.getElementById(this.id).data('handleable', false);
           target.data('connected', true);

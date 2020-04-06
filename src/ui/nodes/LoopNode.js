@@ -7,10 +7,9 @@ function LoopNode(position) {
   Node.call(this, 'loop', position);
 
   this.hyphaeInstance = new LoopBlock();
-  this.scope = [];
-  this.conditions = [];
-  this.statements = [];
   this.connectors = [];
+
+  const { x, y } = this.cyInstance.position();
 
   this.midPoint = cy.add([{
     group : 'nodes',
@@ -21,7 +20,10 @@ function LoopNode(position) {
       midPoint : true,
       type : 'connector'
     },
-    position : this.getOffsetPosition(0, -50),
+    position : {
+      x : x,
+      y : y + 50
+    },
     classes : [ 'connector' ]
   }, {
     group: 'edges',
@@ -37,8 +39,6 @@ function LoopNode(position) {
 
 // Inherit Node methods
 LoopNode.prototype = Object.create(Node.prototype);
-
-// Set the constructor to return a BlockNode object
 LoopNode.prototype.constructor = LoopNode;
 
 
@@ -103,7 +103,6 @@ LoopNode.prototype.connectNode = function(target, edge) {
     if (targetType === 'block') {
       if (!NodeStore[targetType][targetId].hyphaeInstance.isDescendantOf(this.hyphaeInstance)) {
         this.hyphaeInstance.body.defineParent(NodeStore[targetType][targetId].hyphaeInstance);
-        NodeStore[targetType][targetId].statements.splice(index, 1, this.id);
         NodeStore[targetType][targetId].addConnector();
         cy.getElementById(this.id).data('handleable', false);
         target.data('connected', true);
@@ -114,7 +113,6 @@ LoopNode.prototype.connectNode = function(target, edge) {
       if (targetType === 'conditional' || targetType === 'loop') {
         if (!NodeStore[targetType][targetId].hyphaeInstance.body.isDescendantOf(this.hyphaeInstance.body)) {
           this.hyphaeInstance.body.defineParent(NodeStore[targetType][targetId].hyphaeInstance.body);
-          NodeStore[targetType][targetId].statements.splice(index, 1, this.id);
           NodeStore[targetType][targetId].addConnector();
           cy.getElementById(this.id).data('handleable', false);
           target.data('connected', true);

@@ -37,8 +37,7 @@ DataNode.prototype.connectNode = function(target, edge) {
       target.data('connected', true);
       invalidConnection = false;
     } else if (['block', 'loop', 'conditional'].indexOf(targetType) !== -1) {
-      if (NodeStore[targetType][targetId].scope.indexOf(this.id) === -1) {
-        NodeStore[targetType][targetId].scope.push(this.id);
+      if (!NodeStore[targetType][targetId].hasConnection(this.id)) {
         NodeStore[targetType][targetId].addConnector();
         target.data('connected', true);
         invalidConnection = false;
