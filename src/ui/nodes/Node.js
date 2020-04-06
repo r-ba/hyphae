@@ -24,6 +24,8 @@ function Node(type, position) {
     classes : [ type ],
   });
 
+  this.connectors = [];
+
   // Setup cy-automove listener
   cy.automove({
     reposition: 'drag',
@@ -31,19 +33,3 @@ function Node(type, position) {
     dragWith: this.cyInstance
   });
 }
-
-
-/**
- * Return the position of the node offset by the specified coordinates.
- *
- * @param {number} x0 The x-coordinate to offset the position by.
- * @param {number} y0 The y-coordinate to offset the position by.
- * @return {object}
- */
-Node.prototype.getOffsetPosition = function(x0, y0) {
-  const { x, y } = this.cyInstance.position();
-  return {
-    x : x - x0,
-    y : y - y0
-  };
-};
