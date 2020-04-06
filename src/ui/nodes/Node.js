@@ -23,6 +23,13 @@ function Node(type, position) {
     position : position,
     classes : [ type ],
   });
+
+  // Setup cy-automove listener
+  cy.automove({
+    reposition: 'drag',
+    nodesMatching: node => node.data().targetId === this.id ? true : false,
+    dragWith: this.cyInstance
+  });
 }
 
 
