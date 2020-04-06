@@ -26,33 +26,35 @@ BlockNode.prototype.constructor = BlockNode;
 BlockNode.prototype.addConnector = function() {
   const numConnectors = this.connectors.length;
   const id = `${this.id}-C${numConnectors}`;
+  const { x, y } = this.cyInstance.position();
 
   const connector = cy.add({
-    nodes : [
-      {
-        data : {
-          id : id,
-          index : numConnectors,
-          targetId : this.id,
-          targetType : 'block',
-          connected : false,
-          type : 'connector'
-        },
-        position : this.getOffsetPosition(0, -75),
-        classes : [ 'connector' ]
-      }
-    ],
-    edges : [
-      {
-        data : {
-          source : id,
-          target : this.id
-        }
-      }
-    ]
+    group : 'nodes',
+    data : {
+      id : id,
+      index : numConnectors,
+      targetId : this.id,
+      targetType : 'block',
+      connected : false,
+      type : 'connector'
+    },
+    position : {
+      x : x,
+      y : y
+    },
+    classes : [ 'connector' ]
+  });
+
+  cy.add({
+    group : 'edges',
+    data : {
+      source : id,
+      target : this.id
+    }
   });
 
   this.connectors.push(connector);
+  positionConnectors([100], { x, y }, this.connectors);
 };
 
 

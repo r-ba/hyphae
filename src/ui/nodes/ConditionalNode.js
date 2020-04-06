@@ -29,54 +29,64 @@ ConditionalNode.prototype.addConnector = function() {
  const numConnectors = this.connectors.length;
  const conditionalId = `${this.id}_C${numConnectors}`;
  const statementId = `${this.id}_S${numConnectors}`;
+ const { x, y } = this.cyInstance.position();
 
-  const connector = cy.add({
-    nodes : [
-      {
-        data : {
-          id : conditionalId,
-          index : numConnectors,
-          targetId : this.id,
-          targetType : 'conditional',
-          connected : false,
-          midPoint : true,
-          type : 'connector'
-        },
-        position : this.getOffsetPosition(0, -50),
-        classes : [ 'connector' ]
+  const connector = cy.add([
+    {
+      group : 'nodes',
+      data : {
+        id : conditionalId,
+        index : numConnectors,
+        targetId : this.id,
+        targetType : 'conditional',
+        connected : false,
+        midPoint : true,
+        type : 'connector'
       },
-      {
-        data : {
-          id : statementId,
-          index : numConnectors,
-          targetId : this.id,
-          targetType : 'conditional',
-          connected : false,
-          midPoint : false,
-          type : 'connector'
-        },
-        position : this.getOffsetPosition(0, -100),
-        classes : [ 'connector' ]
-      }
-    ],
+      position : {
+        x : x,
+        y : y
+      },
+      classes : [ 'connector' ]
+    },
+    {
+      group : 'nodes',
+      data : {
+        id : statementId,
+        index : numConnectors,
+        targetId : this.id,
+        targetType : 'conditional',
+        connected : false,
+        midPoint : false,
+        type : 'connector'
+      },
+      position : {
+        x : x,
+        y : y
+      },
+      classes : [ 'connector' ]
+    }
+  ]);
 
-    edges : [
-      {
-        data : {
-          source : conditionalId,
-          target : this.id
-        }
-      },
-      {
-        data : {
-          source : statementId,
-          target : conditionalId
-        }
+  cy.add([
+    {
+      group : 'edges',
+      data : {
+        source : conditionalId,
+        target : this.id
       }
-    ]
-  });
+    },
+    {
+      group : 'edges',
+      data : {
+        source : statementId,
+        target : conditionalId
+      }
+    }
+  ]);
 
   this.connectors.push(connector);
+  positionConnectors([50, 100], { x, y }, this.connectors);
 };
 
 

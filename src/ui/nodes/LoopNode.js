@@ -12,28 +12,28 @@ function LoopNode(position) {
   this.statements = [];
   this.connectors = [];
 
-  cy.add({
-    nodes : [{
-      data : {
-        id : `${this.id}_C`,
-        targetId : this.id,
-        targetType : 'loop',
-        midPoint : true,
-        type : 'connector'
-      },
-      position : this.getOffsetPosition(0, -50),
-      classes : [ 'connector' ]
-    }],
-    edges : [{
-      data : {
-        source : `${this.id}_C`,
-        target : this.id
-      }
-    }]
-  });
+  this.midPoint = cy.add([{
+    group : 'nodes',
+    data : {
+      id : `${this.id}_C`,
+      targetId : this.id,
+      targetType : 'loop',
+      midPoint : true,
+      type : 'connector'
+    },
+    position : this.getOffsetPosition(0, -50),
+    classes : [ 'connector' ]
+  }, {
+    group: 'edges',
+    data : {
+      source : `${this.id}_C`,
+      target : this.id
+    }
+  }]);
 
   this.addConnector();
 }
+
 
 // Inherit Node methods
 LoopNode.prototype = Object.create(Node.prototype);
@@ -49,34 +49,36 @@ LoopNode.prototype.constructor = LoopNode;
 LoopNode.prototype.addConnector = function() {
  const numConnectors = this.connectors.length;
  const statementId = `${this.id}_S${numConnectors}`;
+ const { x, y } = this.midPoint.position();
 
   const connector = cy.add({
-    nodes : [
-      {
-        data : {
-          id : statementId,
-          index : numConnectors,
-          targetId : this.id,
-          targetType : 'loop',
-          connected : false,
-          midPoint : false,
-          type : 'connector'
-        },
-        position : this.getOffsetPosition(0, -100),
-        classes : [ 'connector' ]
-      }
-    ],
-    edges : [
-      {
-        data : {
-          source : statementId,
-          target : `${this.id}_C`
-        }
-      }
-    ]
+    group : 'nodes',
+    data : {
+      id : statementId,
+      index : numConnectors,
+      targetId : this.id,
+      targetType : 'loop',
+      connected : false,
+      midPoint : false,
+      type : 'connector'
+    },
+    position : {
+      x : x,
+      y : y
+    },
+    classes : [ 'connector' ]
+  });
+
+  cy.add({
+    group : 'edges',
+    data : {
+      source : statementId,
+      target : `${this.id}_C`
+    }
   });
 
   this.connectors.push(connector);
+  positionConnectors([50], { x, y }, this.connectors);
 };
 
 
