@@ -33,3 +33,21 @@ function Node(type, position) {
     dragWith: this.cyInstance
   });
 }
+
+
+/**
+ * Check if this Node has already been connected to a given Node.
+ *
+ * @param {string} id The Node id being checked against.
+ * @return {boolean} True iff a connection exists.
+ */
+Node.prototype.hasConnection = function(id) {
+  let count = 0;
+  for (const connector of this.connectors) {
+    for (const node of connector.neighbourhood(`node[id != "${this.id}"]`)) {
+      if (node.id() === id) count += 1;
+      if (count > 1) return true;
+    }
+  }
+  return false;
+};
