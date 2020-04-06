@@ -27,11 +27,13 @@ OperationNode.prototype.defineOperation = function(f) {
     argv : Array(arity).fill(''),
     to : ''
   };
+  const { x, y } = this.cyInstance.position();
 
-  const nodes = [], edges = [];
+  const nodes = [];
   for (let i = 0; i < arity; i++) {
     const id = `${this.id}-C${i}`;
-    nodes.push({
+    nodes.push(cy.add({
+      group : 'nodes',
       data : {
         id : id,
         index : i,
@@ -40,10 +42,15 @@ OperationNode.prototype.defineOperation = function(f) {
         connected : false,
         type : 'connector'
       },
-      position : this.getOffsetPosition(50 - 50 * i, -75),
+      position : {
+        x : x,
+        y : y
+      },
       classes : [ 'connector' ]
-    });
-    edges.push({
+    }));
+
+    cy.add({
+      group : 'edges',
       data : {
         source : id,
         target : this.id
@@ -51,10 +58,7 @@ OperationNode.prototype.defineOperation = function(f) {
     });
   }
 
-  cy.add({
-    nodes : nodes,
-    edges : edges
-  });
+  positionConnectors([100], { x, y }, nodes);
 };
 
 
