@@ -1,4 +1,39 @@
 /**
+ * A lookup table mapping types to their respective objects.
+ */
+const NodeTypes = {
+  data : DataNode,
+  operation : OperationNode,
+  block : BlockNode,
+  conditional : ConditionalNode,
+  loop : LoopNode
+};
+
+/**
+ * A cache of all instantiated Node type objects.
+ */
+const NodeStore = {
+  data : {},
+  operation : {},
+  block : {},
+  conditional : {},
+  loop : {},
+  set : function(type, options) {
+    if (type !== 'set' && this.hasOwnProperty(type)) {
+      const { position, value } = options;
+      const node = new NodeTypes[type](position, value);
+      this[type][node.id] = node;
+    } else {
+      console.error(`${type} is not a valid Node type`);
+    }
+  },
+  del : function(type, id) {
+    // To-do
+  }
+};
+
+
+/**
  * Radially space a sequence of connector nodes.
  *
  * @param {Array<number>} radii The radii to distance paired connectors.
