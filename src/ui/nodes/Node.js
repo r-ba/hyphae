@@ -5,24 +5,19 @@
  * @param {object} position The location to render the node.
  */
 function Node(type, position) {
-
-  // Generate unique id
-  this.id = generateId();
-
-  // Add instance to local store
-  NodeStore[type][this.id] = this;
-
   // Create corresponding Cytoscape node instance
   this.cyInstance = cy.add({
     group : 'nodes',
     data : {
-      id : this.id,
+      // id : this.id,
       type : type,
       handleable : true
     },
     position : position,
     classes : [ type ],
   });
+
+  this.id = this.cyInstance.id();
 
   this.connectors = [];
 
