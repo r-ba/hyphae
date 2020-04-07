@@ -97,7 +97,9 @@ OperationNode.prototype.connectNode = function(target, edge) {
         target.data('connected', true);
         invalidConnection = false;
       } else if (targetType === 'loop') {
-        invalidConnection = false;
+        if (edge.target().edgesWith(this.cyInstance).length < 2) {
+          invalidConnection = false;
+        }
       }
     } else {
       if (targetType === 'conditional' || targetType === 'loop') {
