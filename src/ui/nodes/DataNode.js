@@ -23,8 +23,10 @@ DataNode.prototype.constructor = DataNode;
  */
 DataNode.prototype.connectNode = function(target, edge) {
   const {
+    id,
     type,
     index,
+    midPoint,
     connected,
     targetType,
     targetId
@@ -37,7 +39,17 @@ DataNode.prototype.connectNode = function(target, edge) {
       target.data('connected', true);
       invalidConnection = false;
     } else if (['block', 'loop', 'conditional'].indexOf(targetType) !== -1) {
-      if (!NodeStore[targetType][targetId].hasConnection(this.id)) {
+      if (!midPoint && !NodeStore[targetType][targetId].hasConnection(this.id)) {
+        if (targetType !== 'block') {
+          cy.add({
+            group : 'edges',
+            data : {
+              target : targetId,
+              source : id
+            }
+          });
+          cy.remove(`#${targetId}_C${index}`);
+        }
         NodeStore[targetType][targetId].addConnector();
         target.data('connected', true);
         invalidConnection = false;
