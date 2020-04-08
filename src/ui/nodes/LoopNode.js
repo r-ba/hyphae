@@ -37,7 +37,7 @@ function LoopNode(position) {
 }
 
 
-// Inherit Node methods
+/* Inherit from Node */
 LoopNode.prototype = Object.create(Node.prototype);
 LoopNode.prototype.constructor = LoopNode;
 
@@ -89,7 +89,11 @@ LoopNode.prototype.addConnector = function() {
  * @param {object} edge The Cytoscape edge object added.
  */
 LoopNode.prototype.connectNode = function(target, edge) {
-  if (connectNode(target.data(), this.id, this.hyphaeInstance.body)) {
+  const targetData = target.data();
+  if (targetData.type === 'main') {
+    NodeStore.main[targetData.id].connectors.push(this.id);
+    cy.getElementById(this.id).data('handleable', false);
+  } else if (connectNode(target.data(), this.id, this.hyphaeInstance.body)) {
     target.data('connected', true);
   } else {
     cy.remove(edge);

@@ -80,7 +80,10 @@ OperationNode.prototype.connectNode = function(target, edge) {
   } = target.data();
   let invalidConnection = true;
 
-  if (type === 'data') {
+  if (type === 'main') {
+    NodeStore.main[id].connectors.push(this.id);
+    invalidConnection = false;
+  } else if (type === 'data') {
     const { to } = this.options;
     if (to !== '' && to !== id) {
       cy.remove(`edge[source="${this.id}"][target="${this.options.to}"]`);

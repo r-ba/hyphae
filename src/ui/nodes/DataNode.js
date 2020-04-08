@@ -33,23 +33,16 @@ DataNode.prototype.connectNode = function(target, edge) {
   } = target.data();
   let invalidConnection = true;
 
-  if (type === 'connector' && !connected) {
+  if (type === 'main') {
+    NodeStore.main[id].connectors.push(this.id);
+    invalidConnection = false;
+  } else if (type === 'connector' && !connected) {
     if (targetType === 'operation') {
       NodeStore[targetType][targetId].options.argv[index] = this.id;
       target.data('connected', true);
       invalidConnection = false;
-    } else if (['block', 'loop', 'conditional'].indexOf(targetType) !== -1) {
+    } else if (['block', 'loop'].indexOf(targetType) !== -1) {
       if (!midPoint && !NodeStore[targetType][targetId].hasConnection(this.id)) {
-        if (targetType !== 'block') {
-          cy.add({
-            group : 'edges',
-            data : {
-              target : targetId,
-              source : id
-            }
-          });
-          cy.remove(`#${targetId}_C${index}`);
-        }
         NodeStore[targetType][targetId].addConnector();
         target.data('connected', true);
         invalidConnection = false;

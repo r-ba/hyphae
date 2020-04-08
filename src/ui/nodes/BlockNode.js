@@ -63,7 +63,11 @@ BlockNode.prototype.addConnector = function() {
  * @param {object} edge The Cytoscape edge object added.
  */
 BlockNode.prototype.connectNode = function(target, edge) {
-  if (connectNode(target.data(), this.id, this.hyphaeInstance)) {
+  const targetData = target.data();
+  if (targetData.type === 'main') {
+    NodeStore.main[targetData.id].connectors.push(this.id);
+    cy.getElementById(this.id).data('handleable', false);
+  } else if (connectNode(targetData, this.id, this.hyphaeInstance)) {
     target.data('connected', true);
   } else {
     cy.remove(edge);
