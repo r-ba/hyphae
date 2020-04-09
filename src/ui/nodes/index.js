@@ -1,3 +1,11 @@
+import MainNode from './MainNode.js';
+import DataNode from './DataNode.js';
+import OperationNode from './OperationNode.js';
+import BlockNode from './BlockNode.js';
+import ConditionalNode from './ConditionalNode.js';
+import LoopNode from './LoopNode.js';
+
+
 /**
  * A lookup table mapping types to their respective objects.
  */
@@ -9,6 +17,7 @@ const NodeTypes = {
   conditional : ConditionalNode,
   loop : LoopNode
 };
+
 
 /**
  * A cache of all instantiated Node type objects.
@@ -182,4 +191,12 @@ const operatorArity = {
   'floor' : 1,
   'max' : 2, // Can replace this with Infinity once proper infrastructure is in place
   'min' : 2, // Same note as `max`
+};
+
+export {
+  NodeStore,
+  positionConnectors,
+  connectNode,
+  highlightNode,
+  operatorArity
 };
