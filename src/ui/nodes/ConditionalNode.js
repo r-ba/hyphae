@@ -133,3 +133,75 @@ ConditionalNode.prototype.connectNode = function(target, edge) {
     cy.remove(edge);
   }
 };
+
+
+/**
+ * Collect data, validate subtrees, and set corresponding Hypha object properties.
+ *
+ * @return {boolean} Return true iff compilation succeeded.
+ */
+ConditionalNode.prototype.compile = async function() {
+  const scope = {};
+  let index = 0;
+  let successStatus = true;
+
+  // Collect scoped values
+  for (const id of this.scope) {
+    scope[id] = NodeStore.data[id].value;
+  }
+  this.hyphaeInstance.body.scope = scope;
+
+  for (const connectors of this.connectors) {
+    const [ conditionalConnector, statementConnector ] = connectors.map(connector => connector);
+    const conditionalData = conditionalConnector.data();
+    const statementData = statementConnector.data();
+
+    if (statementData.connected) {
+      if (conditionalData.connected) {
+        const condition = conditionalConnector.incomers('node[type!="connector"]').data();
+        const isConditionValid = await NodeStore.operation[condition.id].compile();
+
+        if (isConditionValid) {
+          const { type, id } = statementConnector.incomers('node[type!="connector"]').data();
+          const isStatementValid = await NodeStore[type][id].compile();
+
+          if (isStatementValid) {
+            this.hyphaeInstance.insertCondition(index, NodeStore.operation[condition.id].options);
+            if (type === 'operation') {
+              this.hyphaeInstance.insertStatement(index++, NodeStore[type][id].options);
+            } else {
+              this.hyphaeInstance.insertStatement(index++, NodeStore[type][id].hyphaeInstance);
+            }
+          } else {
+            successStatus = false;
+          }
+        } else {
+          successStatus = false;
+        }
+      } else {
+        highlightNode(conditionalConnector, true);
+        successStatus = false;
+      }
+    } else {
+      if (!conditionalData.connected) {
+        highlightNode(conditionalConnector, true);
+      }
+      highlightNode(statementConnector, true);
+      successStatus = false;
+    }
+  }
+
+  if (this.defaultConnector.data().connected) {
+    const { type, id } = this.defaultConnector.incomers('node[type!="connector"]').data();
+    const isStatementValid = await NodeStore[type][id].compile();
+    if (isStatementValid) {
+      if (type === 'operation') {
+        this.hyphaeInstance.insertStatement(index, NodeStore[type][id].options);
+      } else {
+        this.hyphaeInstance.insertStatement(index, NodeStore[type][id].hyphaeInstance);
+      }
+    }
+  }
+
+  return successStatus;
+};
