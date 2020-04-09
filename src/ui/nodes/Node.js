@@ -4,12 +4,11 @@
  * @param {string} type The type of node to instantiate.
  * @param {object} position The location to render the node.
  */
-function Node(type, position) {
+function Node(type, position, enableAutomove = true) {
   // Create corresponding Cytoscape node instance
   this.cyInstance = cy.add({
     group : 'nodes',
     data : {
-      // id : this.id,
       type : type,
       handleable : true
     },
@@ -21,12 +20,14 @@ function Node(type, position) {
 
   this.connectors = [];
 
-  // Setup cy-automove listener
-  cy.automove({
-    reposition: 'drag',
-    nodesMatching: node => node.data().targetId === this.id ? true : false,
-    dragWith: this.cyInstance
-  });
+  // Setup cy-automove listener, if enabled
+  if (enableAutomove) {
+    cy.automove({
+      reposition: 'drag',
+      nodesMatching: node => node.data().targetId === this.id ? true : false,
+      dragWith: this.cyInstance
+    });
+  }
 }
 
 
