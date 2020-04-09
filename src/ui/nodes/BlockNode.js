@@ -7,6 +7,7 @@ function BlockNode(position) {
   Node.call(this, 'block', position);
 
   this.hyphaeInstance = new Block();
+  this.scope = [];
   this.connectors = [];
   this.addConnector();
 }
@@ -65,6 +66,7 @@ BlockNode.prototype.addConnector = function() {
 BlockNode.prototype.connectNode = function(target, edge) {
   const targetData = target.data();
   if (targetData.type === 'main') {
+    this.hyphaeInstance.defineParent(NodeStore.main[targetData.id].main);
     NodeStore.main[targetData.id].connectors.push(this.id);
     cy.getElementById(this.id).data('handleable', false);
   } else if (connectNode(targetData, this.id, this.hyphaeInstance)) {
@@ -72,4 +74,45 @@ BlockNode.prototype.connectNode = function(target, edge) {
   } else {
     cy.remove(edge);
   }
+};
+
+
+/**
+ * Collect data, validate subtrees, and set corresponding Hypha object properties.
+ *
+ * @return {boolean} Return true iff compilation succeeded.
+ */
+BlockNode.prototype.compile = async function() {
+  const scope = {};
+  let statementIndex = 0;
+  let successStatus = true; // Permit empty blocks
+
+  // Collect scoped values
+  for (const id of this.scope) {
+    scope[id] = NodeStore.data[id].value;
+  }
+  this.hyphaeInstance.scope = scope;
+
+  // Collect and verify operation, and block-like statements
+  for (const connector of this.connectors) {
+    const { connected } = connector.data();
+
+    if (connected) { // Ignore empty connectors
+      const { type, id } = connector.incomers('node').data();
+      successStatus = await NodeStore[type][id].compile();
+      if (successStatus) {
+        let statement;
+        if (type === 'operation') {
+          statement = NodeStore[type][id].options;
+        } else {
+          statement = NodeStore[type][id].hyphaeInstance;
+        }
+        this.hyphaeInstance.insertStatement(statementIndex++, statement);
+      } else {
+        break;
+      }
+    }
+  }
+
+  return successStatus;
 };
