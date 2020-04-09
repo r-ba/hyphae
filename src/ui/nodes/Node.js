@@ -18,8 +18,6 @@ function Node(type, position, enableAutomove = true) {
 
   this.id = this.cyInstance.id();
 
-  this.connectors = [];
-
   // Setup cy-automove listener, if enabled
   if (enableAutomove) {
     cy.automove({
@@ -47,3 +45,6 @@ Node.prototype.hasConnection = function(id) {
   }
   return false;
 };
+
+
+export default Node;

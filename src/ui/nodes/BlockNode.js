@@ -1,3 +1,13 @@
+import { Block } from '../../hypha/index.js';
+import {
+  NodeStore,
+  positionConnectors,
+  connectNode,
+  highlightNode
+} from './index.js';
+import Node from './Node.js';
+
+
 /**
  * Block type UI node.
  *
@@ -117,3 +127,6 @@ BlockNode.prototype.compile = async function() {
 
   return successStatus;
 };
+
+
+export default BlockNode;

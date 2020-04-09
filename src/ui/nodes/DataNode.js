@@ -1,3 +1,10 @@
+import {
+  NodeStore,
+  highlightNode
+} from './index.js';
+import Node from './Node.js';
+
+
 /**
  * Data type UI node.
  *
@@ -51,3 +58,6 @@ DataNode.prototype.connectNode = function(target, edge) {
     cy.remove(edge);
   }
 };
+
+
+export default DataNode;

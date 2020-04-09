@@ -1,3 +1,13 @@
+import { LoopBlock } from '../../hypha/index.js';
+import {
+  NodeStore,
+  positionConnectors,
+  connectNode,
+  highlightNode
+} from './index.js';
+import Node from './Node.js';
+
+
 /**
  * Loop type UI node.
  *
@@ -180,3 +190,6 @@ LoopNode.prototype.compile = async function() {
 
   return successStatus;
 };
+
+
+export default LoopNode;

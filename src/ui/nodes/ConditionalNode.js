@@ -1,3 +1,13 @@
+import { ConditionalBlock } from '../../hypha/index.js';
+import {
+  NodeStore,
+  positionConnectors,
+  connectNode,
+  highlightNode
+} from './index.js';
+import Node from './Node.js';
+
+
 /**
  * Conditional type UI node.
  *
@@ -206,3 +216,6 @@ ConditionalNode.prototype.compile = async function() {
 
   return successStatus;
 };
+
+
+export default ConditionalNode;

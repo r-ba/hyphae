@@ -1,3 +1,12 @@
+import { Block } from '../../hypha/index.js';
+import {
+  NodeStore,
+  positionConnectors,
+  connectNode,
+  highlightNode
+} from './index.js';
+
+
 /**
  * Main UI node.
  *
@@ -83,3 +92,6 @@ MainNode.prototype.execute = async function() {
     await this.main.execute();
   }
 };
+
+
+export default MainNode;

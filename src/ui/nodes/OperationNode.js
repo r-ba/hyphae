@@ -1,3 +1,12 @@
+import {
+  NodeStore,
+  positionConnectors,
+  highlightNode,
+  operatorArity
+} from './index.js';
+import Node from './Node.js';
+
+
 /**
  * Operation type UI node.
  *
@@ -142,3 +151,6 @@ OperationNode.prototype.compile = async function() {
     return false;
   }
 };
+
+
+export default OperationNode;
