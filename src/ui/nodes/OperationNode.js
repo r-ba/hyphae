@@ -117,3 +117,26 @@ OperationNode.prototype.connectNode = function(target, edge) {
     cy.remove(edge);
   }
 };
+
+
+/**
+ * Validate argv, and to option properties.
+ *
+ * @return {boolean} Return true iff validation succeeded.
+ */
+OperationNode.prototype.compile = async function() {
+  if (this.options.to) {
+    let successStatus = true;
+    for (let i = 0; i < this.options.argv.length; i++) {
+      if (this.options.argv[i] === '') {
+        const connector = cy.getElementById(`${this.id}-C${i}`);
+        highlightNode(connector, true);
+        successStatus = false;
+      }
+    }
+    return successStatus;
+  } else {
+    highlightNode(this.cyInstance, true);
+    return false;
+  }
+};
