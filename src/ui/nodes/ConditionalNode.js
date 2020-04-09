@@ -7,8 +7,37 @@ function ConditionalNode(position) {
   Node.call(this, 'conditional', position);
 
   this.hyphaeInstance = new ConditionalBlock(null);
+  this.scope = [];
   this.connectors = [];
   this.addConnector();
+
+  // Add default statement connector
+  const { x, y } = this.cyInstance.position();
+
+  this.defaultConnector = cy.add({
+    group : 'nodes',
+    data : {
+      id : `${this.id}_D`,
+      targetId : this.id,
+      targetType : 'conditional',
+      connected : false,
+      midPoint : false,
+      type : 'connector'
+    },
+    position : {
+      x : x + 50,
+      y : y
+    },
+    classes : [ 'connector' ]
+  });
+
+  cy.add({
+    group : 'edges',
+    data : {
+      source : `${this.id}_D`,
+      target : this.id
+    }
+  });
 }
 
 
@@ -95,6 +124,7 @@ ConditionalNode.prototype.addConnector = function() {
 ConditionalNode.prototype.connectNode = function(target, edge) {
   const targetData = target.data();
   if (targetData.type === 'main') {
+    this.hyphaeInstance.body.defineParent(NodeStore.main[targetData.id].main);
     NodeStore.main[targetData.id].connectors.push(this.id);
     cy.getElementById(this.id).data('handleable', false);
   } else if (connectNode(targetData, this.id, this.hyphaeInstance.body)) {
