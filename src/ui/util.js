@@ -42,16 +42,20 @@ const NodeStore = {
  * @param {object} position The position of the connector's parent node.
  * @param {Array<object>} connectors
  */
-const positionConnectors = (radii, position, connectors) => {
+const positionConnectors = (radii, position, connectors, steps=null) => {
   const { x, y } = position;
   const n = connectors.length;
   const a = -1 * Math.PI / (2 * n);
   const r = radii.length;
 
+  if (steps === null) {
+    steps = Array(n).fill(null).map((i,j) => j);
+  }
+
   for (let i = 0; i < n; i++) {
     connectors[i].forEach((ele, j) => {
-      const x0 = Math.cos((i + n/2 + 0.5) * a);
-      const y0 = Math.sin((i + n/2 + 0.5) * a);
+      const x0 = Math.cos((steps[i] + n/2 + 0.5) * a);
+      const y0 = Math.sin((steps[i] + n/2 + 0.5) * a);
       ele.animate({
         position : {
           x : x - radii[j] * x0,

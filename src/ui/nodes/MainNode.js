@@ -19,21 +19,25 @@ function MainNode(position) {
   this.main = new Block();
   this.isValidated = false;
 
-  // const { x, y } = position;
-  // const spawnTypes = [];
-  // for (const type of ['data', 'operation', 'block', 'conditional', 'loop']) {
-  //   spawnTypes.push(cy.add({
-  //     group : 'nodes',
-  //     grabbable : false,
-  //     position : {
-  //       x : x,
-  //       y : y
-  //     },
-  //     classes: [ `spawn${type}` ]
-  //   }));
-  // }
-  //
-  // positionConnectors([200], { x, y }, spawnTypes);
+  const { x, y } = position;
+  const spawnTypes = [];
+  for (const type of ['data', 'operation', 'block', 'conditional', 'loop']) {
+    spawnTypes.push(cy.add({
+      group : 'nodes',
+      grabbable : false,
+      data : {
+        type : type
+      },
+      position : {
+        x : x,
+        y : y
+      },
+      classes: [ 'spawn', `spawn_${type}` ]
+    }));
+  }
+
+  const steps = [-2, 0, 2, 4, 6];
+  positionConnectors([250], { x, y }, spawnTypes, steps);
 }
 
 

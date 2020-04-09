@@ -1,3 +1,14 @@
+cy.on('click', '.spawn', function(event) {
+  const { type } = event.target.data();
+  const { x, y } = event.target.position();
+  const options = {
+    position : { x, y }
+  };
+  if (type === 'data') options.value = 0;
+  else if (type === 'operation') options.value = '+';
+  NodeStore.set(type, options);
+});
+
 cy.on('click', '.block', function(event) {
   NodeStore.block[event.target.id()].addConnector();
 });
