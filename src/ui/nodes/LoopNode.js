@@ -7,11 +7,12 @@ function LoopNode(position) {
   Node.call(this, 'loop', position);
 
   this.hyphaeInstance = new LoopBlock();
+  this.scope = [];
   this.connectors = [];
 
   const { x, y } = this.cyInstance.position();
 
-  this.midPoint = cy.add([{
+  this.midPoint = cy.add({
     group : 'nodes',
     data : {
       id : `${this.id}_C`,
@@ -25,13 +26,15 @@ function LoopNode(position) {
       y : y + 50
     },
     classes : [ 'connector' ]
-  }, {
+  });
+
+  cy.add({
     group: 'edges',
     data : {
       source : `${this.id}_C`,
       target : this.id
     }
-  }]);
+  });
 
   this.addConnector();
 }
@@ -91,6 +94,7 @@ LoopNode.prototype.addConnector = function() {
 LoopNode.prototype.connectNode = function(target, edge) {
   const targetData = target.data();
   if (targetData.type === 'main') {
+    this.hyphaeInstance.body.defineParent(NodeStore.main[targetData.id].main);
     NodeStore.main[targetData.id].connectors.push(this.id);
     cy.getElementById(this.id).data('handleable', false);
   } else if (connectNode(target.data(), this.id, this.hyphaeInstance.body)) {
@@ -98,4 +102,80 @@ LoopNode.prototype.connectNode = function(target, edge) {
   } else {
     cy.remove(edge);
   }
+};
+
+
+/**
+ * Collect data, validate subtrees, and set corresponding Hypha object properties.
+ *
+ * @return {boolean} Return true iff compilation succeeded.
+ */
+LoopNode.prototype.compile = async function() {
+  const scope = {};
+  let statementIndex = 0;
+  let successStatus = true;
+
+  // Collect scoped values
+  for (const id of this.scope) {
+    scope[id] = NodeStore.data[id].value;
+  }
+  this.hyphaeInstance.body.scope = scope;
+
+  const conditions = this.midPoint.incomers('node[type!="connector"]');
+  const statements = this.connectors
+    .map(connector => connector.incomers('node[type!="connector"]'))
+    .filter(source => source.length > 0);
+
+  const hasConditions = conditions.length > 0;
+  const hasStatements = statements.length > 0;
+
+  // Collect and validate conditionals and block statements
+  if (hasConditions && hasStatements) {
+
+    let conditionIndex = 0;
+    for (const condition of conditions) {
+      const { type, id } = condition.data();
+
+      const conditionValid = await NodeStore[type][id].compile();
+      if (conditionValid) {
+        this.hyphaeInstance.insertCondition(conditionIndex++, NodeStore[type][id].options);
+      } else {
+        successStatus = false;
+        break;
+      }
+
+    }
+
+    if (successStatus) {
+      // conditions compilation succeeded -> compile statements
+      let statementIndex = 0;
+      for (const statement of statements) {
+        const { type, id } = statement.data();
+
+        successStatus = await NodeStore[type][id].compile();
+        if (successStatus) {
+          let statement;
+          if (type === 'operation') {
+            statement = NodeStore[type][id].options;
+          } else {
+            statement = NodeStore[type][id].hyphaeInstance;
+          }
+          this.hyphaeInstance.insertStatement(statementIndex++, statement);
+        } else {
+          break;
+        }
+      }
+    }
+
+  } else {
+    if (!hasStatements) {
+      this.connectors.forEach(connector => highlightNode(connector, true));
+    }
+
+    if (!hasConditions) {
+      highlightNode(this.midPoint, true);
+    }
+  }
+
+  return successStatus;
 };
