@@ -36,18 +36,14 @@ DataNode.prototype.connectNode = function(target, edge) {
   if (type === 'main') {
     NodeStore.main[id].connectors.push(this.id);
     invalidConnection = false;
-  } else if (type === 'connector' && !connected) {
-    if (targetType === 'operation') {
+  } else if (type === 'connector' && targetType === 'operation' && !connected) {
       NodeStore[targetType][targetId].options.argv[index] = this.id;
       target.data('connected', true);
       invalidConnection = false;
-    } else if (['block', 'loop'].indexOf(targetType) !== -1) {
-      if (!midPoint && !NodeStore[targetType][targetId].hasConnection(this.id)) {
-        NodeStore[targetType][targetId].addConnector();
-        target.data('connected', true);
-        invalidConnection = false;
-      }
-    }
+  } else if (['block', 'conditional', 'loop'].indexOf(type) !== -1 &&
+             NodeStore[type][id].scope.indexOf(this.id) === -1) {
+    NodeStore[type][id].scope.push(this.id);
+    invalidConnection = false;
   }
 
   if (invalidConnection) {
