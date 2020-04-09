@@ -128,6 +128,7 @@ ConditionalNode.prototype.connectNode = function(target, edge) {
     NodeStore.main[targetData.id].connectors.push(this.id);
     cy.getElementById(this.id).data('handleable', false);
   } else if (connectNode(targetData, this.id, this.hyphaeInstance.body)) {
+    highlightNode(target, false);
     target.data('connected', true);
   } else {
     cy.remove(edge);

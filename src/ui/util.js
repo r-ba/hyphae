@@ -77,7 +77,6 @@ const positionConnectors = (radii, position, connectors) => {
 const connectNode = (targetData, sourceId, sourceBlock) => {
   const {
     type,
-    index,
     midPoint,
     connected,
     targetType,
@@ -104,7 +103,6 @@ const connectNode = (targetData, sourceId, sourceBlock) => {
   }
 
   if (isSuccessfulConnection) {
-    NodeStore[targetType][targetId].addConnector();
     cy.getElementById(sourceId).data('handleable', false);
   }
 

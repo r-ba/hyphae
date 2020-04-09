@@ -90,12 +90,13 @@ OperationNode.prototype.connectNode = function(target, edge) {
     }
     if (to !== id) invalidConnection = false;
     this.options.to = id;
+    highlightNode(this.cyInstance, false);
   } else if (type === 'connector' && !connected) {
     if (targetType === 'block') {
-      NodeStore[targetType][targetId].addConnector();
       target.data('connected', true);
       invalidConnection = false;
     } else if (midPoint) {
+      if (this.options.to === '') this.options.to = this.id;
       if (targetType === 'conditional') {
         target.data('connected', true);
         invalidConnection = false;
@@ -104,9 +105,10 @@ OperationNode.prototype.connectNode = function(target, edge) {
           invalidConnection = false;
         }
       }
+      highlightNode(target, false);
     } else {
       if (targetType === 'conditional' || targetType === 'loop') {
-        NodeStore[targetType][targetId].addConnector();
+        highlightNode(target, false);
         target.data('connected', true);
         invalidConnection = false;
       }

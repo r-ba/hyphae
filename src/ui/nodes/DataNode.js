@@ -4,7 +4,7 @@
  * @param {object} position The location to render the node.
  */
 function DataNode(position, value) {
-  Node.call(this, 'data', position);
+  Node.call(this, 'data', position, false);
 
   this.value = value;
 }
@@ -39,6 +39,7 @@ DataNode.prototype.connectNode = function(target, edge) {
   } else if (type === 'connector' && targetType === 'operation' && !connected) {
       NodeStore[targetType][targetId].options.argv[index] = this.id;
       target.data('connected', true);
+      highlightNode(target, false);
       invalidConnection = false;
   } else if (['block', 'conditional', 'loop'].indexOf(type) !== -1 &&
              NodeStore[type][id].scope.indexOf(this.id) === -1) {
