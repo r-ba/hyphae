@@ -2,6 +2,7 @@
  * A lookup table mapping types to their respective objects.
  */
 const NodeTypes = {
+  main : MainNode,
   data : DataNode,
   operation : OperationNode,
   block : BlockNode,
@@ -13,6 +14,7 @@ const NodeTypes = {
  * A cache of all instantiated Node type objects.
  */
 const NodeStore = {
+  main : {},
   data : {},
   operation : {},
   block : {},
@@ -107,6 +109,33 @@ const connectNode = (targetData, sourceId, sourceBlock) => {
   }
 
   return isSuccessfulConnection;
+};
+
+
+/**
+ * Style a node so that it's appearance is "highlighted".
+ *
+ * @param {object} node The Cytoscape node to be styled.
+ * @param {boolean} turnOn Highlight if true, else undo the style.
+ */
+const highlightNode = (node, turnOn) => {
+  if (turnOn) {
+    node.animate({
+      style : {
+        'border-color': '#ff0000'
+      }
+    }, {
+      duration : 1000
+    });
+  } else {
+    node.animate({
+      style : {
+        'border-color': '#000000'
+      }
+    }, {
+      duration : 1000
+    });
+  }
 };
 
 
