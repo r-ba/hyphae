@@ -8,6 +8,10 @@ cy.on('click', '.data', function(event) {
   NodeStore.data[event.target.id()].popper.classList.toggle('hidden');
 });
 
+cy.on('click', '.operation', function(event) {
+  NodeStore.operation[event.target.id()].popper.classList.toggle('hidden');
+});
+
 cy.on('click', '.block', function(event) {
   NodeStore.block[event.target.id()].addConnector();
 });

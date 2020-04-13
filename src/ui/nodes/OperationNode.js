@@ -12,10 +12,48 @@ import Node from './Node.js';
  *
  * @param {object} position The location to render the node.
  */
-function OperationNode(position, f) {
+function OperationNode(position) {
   Node.call(this, 'operation', position);
 
-  this.defineOperation(f);
+  this.connectors = [];
+  this.options = {
+    f : undefined,
+    argv : undefined,
+    to : ''
+  };
+  this.defineOperation('+');
+
+  const select = this.cyInstance.popper({
+    content : () => {
+      const selectEl = document.createElement('select');
+      selectEl.classList.add('hidden');
+      selectEl.classList.add('node-input');
+
+      for (const opSymbol of Object.keys(operatorArity)) {
+        const optionEl = document.createElement('option');
+        optionEl.value = opSymbol;
+        optionEl.innerText = opSymbol;
+        selectEl.appendChild(optionEl);
+      }
+
+      document.body.appendChild(selectEl);
+
+      return selectEl;
+    },
+    popper : {
+      placement : 'right',
+    }
+  });
+
+  this.popper = select.popper;
+
+  this.popper.onchange = event => {
+    this.defineOperation(event.target.value);
+  };
+
+  const update = () => select.scheduleUpdate();
+  this.cyInstance.on('position', update);
+  cy.on('pan zoom resize', update);
 }
 
 
@@ -30,18 +68,22 @@ OperationNode.prototype.constructor = OperationNode;
  * @param {string} f The function symbol.
  */
 OperationNode.prototype.defineOperation = function(f) {
-  const arity = operatorArity[f];
-  this.options = {
-    f : f,
-    argv : Array(arity).fill(''),
-    to : ''
-  };
-  const { x, y } = this.cyInstance.position();
 
-  const nodes = [];
+  // Clean up old connectors & options
+  for (const connector of this.connectors) {
+    cy.remove(connector);
+  }
+  this.connectors = [];
+
+  const arity = operatorArity[f];
+  this.options.f = f;
+  this.options.argv = Array(arity).fill('');
+
+  // Setup new connectors
+  const { x, y } = this.cyInstance.position();
   for (let i = 0; i < arity; i++) {
     const id = `${this.id}-C${i}`;
-    nodes.push(cy.add({
+    this.connectors.push(cy.add({
       group : 'nodes',
       data : {
         id : id,
@@ -67,7 +109,7 @@ OperationNode.prototype.defineOperation = function(f) {
     });
   }
 
-  positionConnectors([100], { x, y }, nodes);
+  positionConnectors([100], { x, y }, this.connectors);
 };
 
 
@@ -81,11 +123,9 @@ OperationNode.prototype.connectNode = function(target, edge) {
   const {
     id,
     type,
-    index,
     midPoint,
     connected,
-    targetType,
-    targetId
+    targetType
   } = target.data();
   let invalidConnection = true;
 
