@@ -15,22 +15,22 @@ const Operations = {
   '<<' : (x, y) => x << y,
   '>>' : (x, y) => x >> y,
   '>>>' : (x, y) => x >>> y,
-  '~' : x => ~x,
+  '~' : x => Number(~x),
 
   // Logical operators
-  '&&' : (x, y) => x && y,
-  '||' : (x, y) => x || y,
-  '!' : x => !x,
+  '&&' : (x, y) => Number(x && y),
+  '||' : (x, y) => Number(x || y),
+  '!' : x => Number(!x),
 
   // Comparison operators
-  '==' : (x, y) => x == y,
-  '===' : (x, y) => x === y,
-  '!=' : (x, y) => x != y,
-  '!==' : (x, y) => x !== y,
-  '<' : (x, y) => x < y,
-  '<=' : (x, y) => x <= y,
-  '>' : (x, y) => x > y,
-  '>=' : (x, y) => x >= y,
+  '==' : (x, y) => Number(x == y),
+  '===' : (x, y) => Number(x === y),
+  '!=' : (x, y) => Number(x != y),
+  '!==' : (x, y) => Number(x !== y),
+  '<' : (x, y) => Number(x < y),
+  '<=' : (x, y) => Number(x <= y),
+  '>' : (x, y) => Number(x > y),
+  '>=' : (x, y) => Number(x >= y),
 
   // Math library
   'abs' : x => Math.abs(x),
