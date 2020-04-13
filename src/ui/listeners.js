@@ -1,12 +1,11 @@
 cy.on('click', '.spawn', function(event) {
   const { type } = event.target.data();
   const { x, y } = event.target.position();
-  const options = {
-    position : { x, y }
-  };
-  if (type === 'data') options.value = 0;
-  else if (type === 'operation') options.value = '+';
-  NodeStore.set(type, options);
+  NodeStore.set(type, { x, y });
+});
+
+cy.on('click', '.data', function(event) {
+  NodeStore.data[event.target.id()].popper.classList.toggle('hidden');
 });
 
 cy.on('click', '.block', function(event) {

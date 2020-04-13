@@ -10,10 +10,40 @@ import Node from './Node.js';
  *
  * @param {object} position The location to render the node.
  */
-function DataNode(position, value) {
+function DataNode(position) {
   Node.call(this, 'data', position, false);
 
-  this.value = value;
+  this.value = 0;
+
+  const input = this.cyInstance.popper({
+    content : () => {
+      const inputEl = document.createElement('input');
+      inputEl.type = "number";
+      inputEl.value = 0;
+      inputEl.classList.add('hidden');
+      inputEl.classList.add('node-input');
+      document.body.appendChild(inputEl);
+
+      return inputEl;
+    },
+    popper : {
+      placement : 'right',
+    }
+  });
+
+  this.popper = input.popper;
+  this.popper.oninput = event => {
+    const inputValue = Number(event.target.value);
+    if (inputValue) {
+      this.value = inputValue;
+    } else {
+      this.popper.value = this.value;
+    }
+  };
+
+  const update = () => input.scheduleUpdate();
+  this.cyInstance.on('position', update);
+  cy.on('pan zoom resize', update);
 }
 
 
@@ -33,7 +63,6 @@ DataNode.prototype.connectNode = function(target, edge) {
     id,
     type,
     index,
-    midPoint,
     connected,
     targetType,
     targetId
