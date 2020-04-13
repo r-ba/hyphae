@@ -25,28 +25,8 @@ function MainNode(position) {
 
   this.id = this.cyInstance.id();
   this.connectors = [];
-  this.main = new Block();
   this.isValidated = false;
-
-  const { x, y } = position;
-  const spawnTypes = [];
-  for (const type of ['data', 'operation', 'block', 'conditional', 'loop']) {
-    spawnTypes.push(cy.add({
-      group : 'nodes',
-      grabbable : false,
-      data : {
-        type : type
-      },
-      position : {
-        x : x,
-        y : y
-      },
-      classes: [ 'spawn', `spawn_${type}` ]
-    }));
-  }
-
-  const steps = [-2, 0, 2, 4, 6];
-  positionConnectors([250], { x, y }, spawnTypes, steps);
+  this.main = new Block();
 }
 
 
