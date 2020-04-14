@@ -38,7 +38,7 @@ ConditionalBlock.prototype[Symbol.asyncIterator] = function() {
         const { f, argv } = this.conditions[current];
         if (Operations[f](...this.body.collect(argv))) {
           return Promise.resolve({
-            value : await this.body.executeNext(current, lastStatement),//this.statements[current].execute(),
+            value : await this.body.executeNext(current, lastStatement),
             done : true
           });
         } else {
@@ -49,7 +49,7 @@ ConditionalBlock.prototype[Symbol.asyncIterator] = function() {
         }
       } else {
         return Promise.resolve({
-          value : await this.body.executeNext(current, lastStatement),//this.statements[current].execute(),
+          value : await this.body.executeNext(current, lastStatement),
           done : true
         });
       }
@@ -115,6 +115,20 @@ ConditionalBlock.prototype.insertCondition = function(index, condition) {
  */
 ConditionalBlock.prototype.deleteCondition = function(index) {
   this.conditions.splice(index, 1);
+};
+
+
+/**
+ * Setup a function to exfiltrate output with.
+ *
+ * @param {function} pipe
+ */
+ConditionalBlock.prototype.definePipe = function(pipe) {
+  if (typeof pipe === 'function') {
+    this.body.pipe = pipe;
+  } else {
+    console.error(`definePipe error: ${pipe} is not function`);
+  }
 };
 
 
