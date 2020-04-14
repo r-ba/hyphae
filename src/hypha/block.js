@@ -14,6 +14,7 @@ function Block(parent = null, scope = {}, statements = []) {
   this.scope = scope;
   this.statements = [];
   this.defineStatements(statements);
+  this.pipe = () => null;
 }
 
 
@@ -83,8 +84,11 @@ Block.prototype.execute = async function() {
  */
 Block.prototype.executeNext = async function(current, last) {
   if (current < last) {
+    const value = this.statements[current].execute();
+    this.pipe(value);
+    
     return Promise.resolve({
-      value : this.statements[current].execute(),
+      value : value,
       done : false
     });
   } else {
@@ -191,6 +195,20 @@ Block.prototype.isDescendantOf = function(block) {
     ancestor = Object.getPrototypeOf(ancestor);
   }
   return false;
+};
+
+
+/**
+ * Setup a function to exfiltrate output with.
+ *
+ * @param {function} pipe
+ */
+Block.prototype.definePipe = function(pipe) {
+  if (typeof pipe === 'function') {
+    this.pipe = pipe;
+  } else {
+    console.error(`definePipe error: ${pipe} is not function`);
+  }
 };
 
 
