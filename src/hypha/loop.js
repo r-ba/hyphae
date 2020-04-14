@@ -96,4 +96,18 @@ LoopBlock.prototype.deleteCondition = function(index) {
 };
 
 
+/**
+ * Setup a function to exfiltrate output with.
+ *
+ * @param {function} pipe
+ */
+LoopBlock.prototype.definePipe = function(pipe) {
+  if (typeof pipe === 'function') {
+    this.body.pipe = pipe;
+  } else {
+    console.error(`definePipe error: ${pipe} is not function`);
+  }
+};
+
+
 export default LoopBlock;
