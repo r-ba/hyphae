@@ -1,8 +1,7 @@
 import {
   NodeStore,
   positionConnectors,
-  highlightNode,
-  operatorArity
+  highlightNode
 } from './index.js';
 import Node from './Node.js';
 
@@ -29,7 +28,7 @@ function OperationNode(position) {
       selectEl.classList.add('hidden');
       selectEl.classList.add('node-input');
 
-      for (const opSymbol of Object.keys(operatorArity)) {
+      for (const opSymbol of Object.keys(NodeStore.fns)) {
         const optionEl = document.createElement('option');
         optionEl.value = opSymbol;
         optionEl.innerText = opSymbol;
@@ -75,7 +74,7 @@ OperationNode.prototype.defineOperation = function(f) {
   }
   this.connectors = [];
 
-  const arity = operatorArity[f];
+  const arity = NodeStore.arity[f];
   this.options.f = f;
   this.options.argv = Array(arity).fill('');
 
@@ -176,20 +175,15 @@ OperationNode.prototype.connectNode = function(target, edge) {
  * @return {boolean} Return true iff validation succeeded.
  */
 OperationNode.prototype.compile = async function() {
-  if (this.options.to) {
-    let successStatus = true;
-    for (let i = 0; i < this.options.argv.length; i++) {
-      if (this.options.argv[i] === '') {
-        const connector = cy.getElementById(`${this.id}-C${i}`);
-        highlightNode(connector, true);
-        successStatus = false;
-      }
+  let successStatus = true;
+  for (let i = 0; i < this.options.argv.length; i++) {
+    if (this.options.argv[i] === '') {
+      const connector = cy.getElementById(`${this.id}-C${i}`);
+      highlightNode(connector, true);
+      successStatus = false;
     }
-    return successStatus;
-  } else {
-    highlightNode(this.cyInstance, true);
-    return false;
   }
+  return successStatus;
 };
 
 

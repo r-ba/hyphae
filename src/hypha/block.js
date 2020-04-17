@@ -86,7 +86,7 @@ Block.prototype.executeNext = async function(current, last) {
   if (current < last) {
     const value = this.statements[current].execute();
     this.pipe(value);
-    
+
     return Promise.resolve({
       value : value,
       done : false
@@ -135,12 +135,22 @@ Block.prototype.standardizeStatement = function(statement) {
   if (Object.keys(Object.getPrototypeOf(statement)).length) {
     return statement;
   } else {
-    const execute = async () => {
-      const { f, argv, to } = statement;
-      let output = Operations[f](...this.collect(argv));
-      this.assign(to, output);
-      return output;
-    };
+
+    let execute;
+    if (statement.to !== '') {
+      execute = async () => {
+        const { f, argv, to } = statement;
+        let output = Operations[f](...this.collect(argv));
+        this.assign(to, output);
+        return output;
+      };
+    } else {
+      execute = async () => {
+        const { f, argv } = statement;
+        let output = Operations[f](...this.collect(argv));
+        return output;
+      };
+    }
 
     return {
       execute : execute.bind(this)
