@@ -123,7 +123,6 @@ LoopNode.prototype.connectNode = function(target, edge) {
  */
 LoopNode.prototype.compile = async function() {
   const scope = {};
-  let statementIndex = 0;
   let successStatus = true;
 
   // Collect scoped values
