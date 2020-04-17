@@ -1,10 +1,5 @@
 import { Block } from '../../hypha/index.js';
-import {
-  NodeStore,
-  positionConnectors,
-  connectNode,
-  highlightNode
-} from './index.js';
+import { NodeStore } from './index.js';
 
 
 /**
@@ -38,24 +33,24 @@ MainNode.prototype.compile = async function() {
   let statementIndex = 0;
   let successStatus = false;
 
+  for (const DataNode of Object.values(NodeStore.data)) {
+    scope[DataNode.id] = DataNode.value;
+  }
+
   for (const connector of this.connectors) {
     const { type, id } = cy.getElementById(connector).data()
 
-    if (type === 'data') {
-      scope[id] = NodeStore[type][id].value;
-    } else {
-      successStatus = await NodeStore[type][id].compile();
-      if (successStatus) {
-        let statement;
-        if (type === 'operation') {
-          statement = NodeStore[type][id].options;
-        } else {
-          statement = NodeStore[type][id].hyphaeInstance;
-        }
-        this.main.insertStatement(statementIndex++, statement);
+    successStatus = await NodeStore[type][id].compile();
+    if (successStatus) {
+      let statement;
+      if (type === 'operation') {
+        statement = NodeStore[type][id].options;
       } else {
-        break;
+        statement = NodeStore[type][id].hyphaeInstance;
       }
+      this.main.insertStatement(statementIndex++, statement);
+    } else {
+      break;
     }
   }
 

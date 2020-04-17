@@ -69,10 +69,7 @@ DataNode.prototype.connectNode = function(target, edge) {
   } = target.data();
   let invalidConnection = true;
 
-  if (type === 'main') {
-    NodeStore.main[id].connectors.push(this.id);
-    invalidConnection = false;
-  } else if (type === 'connector' && targetType === 'operation' && !connected) {
+  if (type === 'connector' && targetType === 'operation' && !connected) {
       NodeStore[targetType][targetId].options.argv[index] = this.id;
       target.data('connected', true);
       highlightNode(target, false);
