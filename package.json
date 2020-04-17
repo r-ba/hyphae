@@ -2,7 +2,7 @@
   "name": "hyphae",
   "version": "0.1.0",
   "license": "MIT",
-  "description": "A computational playground",
+  "description": "A computational graph playground",
   "repository": {
     "type": "git",
     "url": "https://github.com/r-ba/hyphae.git"
@@ -14,7 +14,12 @@
     "name": "Rhys Balevicius",
     "email": "rhysbalevicius@gmail.com"
   },
-  "keywords": [],
+  "keywords": [
+   "computational",
+   "graph",
+   "playground",
+   "experimental"
+  ],
   "engines": {
     "node": ">=13.11"
   },
@@ -22,14 +27,16 @@
   "main": "src/index.js",
   "scripts": {
     "build": "rollup -c",
-    "test": "mocha"
+    "test": "mocha",
+    "lint": "eslint src",
+    "travis": "npm run test && npm run lint"
   },
-  "dependencies": {
-    "rollup": "^2.0.0",
-    "rollup-plugin-terser": "^5.3.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "chai": "^4.1.2",
-    "mocha": "^7.0.0-esm1"
+    "mocha": "^7.0.0-esm1",
+    "eslint": "^6.5.0",
+    "rollup": "^2.0.0",
+    "rollup-plugin-terser": "^5.3.0"
   }
 }
