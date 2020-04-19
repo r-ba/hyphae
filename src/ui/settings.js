@@ -86,6 +86,7 @@ cy.edgehandles({
   complete: function(sourceNode, targetNode, addedEles){
     const { type, id } = sourceNode.data();
     NodeStore[type][id].connectNode(targetNode, addedEles);
+    addedEles.data('type', 'connection');
   }
 });
 
@@ -114,7 +115,7 @@ cy.cxtmenu({
     {
       fillColor: 'rgba(42,42,42,0.50)',
       content : '',
-      select: ele => createNode('data', ele.position(), 0.15)//7.1)
+      select: ele => createNode('data', ele.position(), 0.15)
     },
     {
       fillColor: 'rgba(42,42,42,0.50)',
