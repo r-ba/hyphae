@@ -42,7 +42,8 @@ function LoopNode(position) {
     group: 'edges',
     data : {
       source : `${this.id}_C`,
-      target : this.id
+      target : this.id,
+      type : 'connector'
     }
   });
 

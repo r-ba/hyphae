@@ -103,7 +103,8 @@ OperationNode.prototype.defineOperation = function(f) {
       group : 'edges',
       data : {
         source : id,
-        target : this.id
+        target : this.id,
+        type : 'connector'
       }
     });
   }

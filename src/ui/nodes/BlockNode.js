@@ -58,7 +58,8 @@ BlockNode.prototype.addConnector = function() {
     group : 'edges',
     data : {
       source : id,
-      target : this.id
+      target : this.id,
+      type : 'connector'
     }
   });
 

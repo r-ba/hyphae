@@ -45,7 +45,8 @@ function ConditionalNode(position) {
     group : 'edges',
     data : {
       source : `${this.id}_D`,
-      target : this.id
+      target : this.id,
+      type : 'connector'
     }
   });
 }
