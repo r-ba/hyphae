@@ -29,7 +29,6 @@ const NodeStore = {
   block : {},
   conditional : {},
   loop : {},
-  // arity : operatorArity,
   set : function(type, position, id) {
     if (Object.prototype.hasOwnProperty.call(NodeTypes, type)) {
       const node = new NodeTypes[type](position);
@@ -39,8 +38,21 @@ const NodeStore = {
       console.error(`${type} is not a valid Node type`);
     }
   },
-  del : function(type, id) {
-    // To-do
+  del : function(type, ele) {
+    if (type === 'node') {
+      // if (Object.prototype.hasOwnProperty.call(NodeTypes, type)) {
+        // if (this[type][id] !== undefined) {
+        //   this[type][id].delete();
+        //   delete this[type][id];
+        // } else {
+        //   console.error(`${id} does not exist in NodeStore[${type}]`);
+        // }
+      // }
+    } else if (type === 'edge') {
+      deleteEdge(ele);
+    } else {
+      console.error(`${type} is not a valid type`);
+    }
   }
 };
 
@@ -71,6 +83,50 @@ const positionConnectors = (radii, position, connectors) => {
       })
     });
   }
+};
+
+
+/**
+ * Delete an edge and clean up.
+ *
+ * @param {object} ele The cytoscape edge to delete.
+ */
+function deleteEdge(ele) {
+  const {
+    type,
+    id,
+    targetId,
+    targetType,
+    index
+  } = ele.target().data();
+
+  if (type === 'connector') {
+    if (targetType === 'operation') {
+      NodeStore.operation[targetId].options.argv[index] = '';
+      ele.target().data('connected', false);
+    } else {
+      if (ele.source().data().type !== 'operation') {
+        ele.source().data('handleable', true);
+        const sourceId = ele.source().data().id;
+        const sourceType = ele.source().data().type;
+        NodeStore[sourceType][sourceId].removeParent();
+      }
+      ele.target().data('connected', false);
+    }
+  } else if (type === 'data') {
+      const sourceId = ele.source().data().id;
+      NodeStore.operation[sourceId].options.to = '';
+  } else {
+    const sourceId = ele.source().data().id;
+    const sourceType = ele.source().data().type;
+    if (sourceType !== 'operation') {
+      ele.source().data('handleable', true);
+      NodeStore[sourceType][sourceId].removeParent();
+    }
+    const mainConnectors = NodeStore.main[id].connectors;
+    mainConnectors.splice(mainConnectors.indexOf(sourceId), 1)
+  }
+  cy.remove(ele);
 };
 
 
