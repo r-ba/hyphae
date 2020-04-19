@@ -58,8 +58,7 @@ BlockNode.prototype.addConnector = function() {
     group : 'edges',
     data : {
       source : id,
-      target : this.id,
-      type : 'connector'
+      target : this.id
     }
   });
 
@@ -127,6 +126,14 @@ BlockNode.prototype.compile = async function() {
   }
 
   return successStatus;
+};
+
+
+/**
+ * Regenerate hyphae instance.
+ */
+BlockNode.prototype.removeParent = function() {
+  this.hyphaeInstance.defineParent(Block.prototype);
 };
 
 

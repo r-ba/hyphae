@@ -1,4 +1,4 @@
-import { ConditionalBlock } from '../../hypha/index.js';
+import { Block, ConditionalBlock } from '../../hypha/index.js';
 import {
   NodeStore,
   positionConnectors,
@@ -16,7 +16,7 @@ import Node from './Node.js';
 function ConditionalNode(position) {
   Node.call(this, 'conditional', position);
 
-  this.hyphaeInstance = new ConditionalBlock(null);
+  this.hyphaeInstance = new ConditionalBlock();
   this.scope = [];
   this.connectors = [];
   this.addConnector();
@@ -45,8 +45,7 @@ function ConditionalNode(position) {
     group : 'edges',
     data : {
       source : `${this.id}_D`,
-      target : this.id,
-      type : 'connector'
+      target : this.id
     }
   });
 }
@@ -216,6 +215,14 @@ ConditionalNode.prototype.compile = async function() {
   }
 
   return successStatus;
+};
+
+
+/**
+ * Regenerate hyphae instance.
+ */
+ConditionalNode.prototype.removeParent = function() {
+  this.hyphaeInstance.body.defineParent(Block.prototype);
 };
 
 

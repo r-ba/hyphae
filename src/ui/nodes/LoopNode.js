@@ -1,4 +1,4 @@
-import { LoopBlock } from '../../hypha/index.js';
+import { Block, LoopBlock } from '../../hypha/index.js';
 import {
   NodeStore,
   positionConnectors,
@@ -42,8 +42,7 @@ function LoopNode(position) {
     group: 'edges',
     data : {
       source : `${this.id}_C`,
-      target : this.id,
-      type : 'connector'
+      target : this.id
     }
   });
 
@@ -189,6 +188,14 @@ LoopNode.prototype.compile = async function() {
   }
 
   return successStatus;
+};
+
+
+/**
+ * Regenerate hyphae instance.
+ */
+LoopNode.prototype.removeParent = function() {
+  this.hyphaeInstance.body.defineParent(Block.prototype);
 };
 
 
