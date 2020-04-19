@@ -31,19 +31,17 @@ function DataNode(position) {
     }
   });
 
-  this.popper = input.popper;
-  this.popper.oninput = event => {
+  this.input = input;
+  this.input.popper.oninput = event => {
     const inputValue = Number(event.target.value);
     if (inputValue) {
       this.value = inputValue;
-    } else {
-      this.popper.value = this.value;
     }
   };
 
-  const update = () => input.scheduleUpdate();
-  this.cyInstance.on('position', update);
-  cy.on('pan zoom resize', update);
+  this.updatePopper = () => this.input.scheduleUpdate();
+  this.cyInstance.on('position', this.updatePopper);
+  cy.on('pan zoom resize', this.updatePopper);
 }
 
 
@@ -83,6 +81,18 @@ DataNode.prototype.connectNode = function(target, edge) {
   if (invalidConnection) {
     cy.remove(edge);
   }
+};
+
+
+/**
+ * Remove cy-popper and it's associated listeners.
+ */
+DataNode.prototype.destroyPopper = function() {
+  this.cyInstance.removeListener('position');
+  cy.removeListener('pan zoom resize', this.updatePopper);
+  this.input.popper.oninput = null;
+  this.input.popper.remove();
+  this.input.destroy();
 };
 
 

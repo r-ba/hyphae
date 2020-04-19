@@ -44,15 +44,15 @@ function OperationNode(position) {
     }
   });
 
-  this.popper = select.popper;
+  this.select = select;
 
-  this.popper.onchange = event => {
+  this.select.popper.onchange = event => {
     this.defineOperation(event.target.value);
   };
 
-  const update = () => select.scheduleUpdate();
-  this.cyInstance.on('position', update);
-  cy.on('pan zoom resize', update);
+  this.updatePopper = () => this.select.scheduleUpdate();
+  this.cyInstance.on('position', this.updatePopper);
+  cy.on('pan zoom resize', this.updatePopper);
 }
 
 
@@ -185,6 +185,18 @@ OperationNode.prototype.compile = async function() {
     }
   }
   return successStatus;
+};
+
+
+/**
+ * Remove cy-popper and it's associated listeners.
+ */
+OperationNode.prototype.destroyPopper = function() {
+  this.cyInstance.removeListener('position');
+  cy.removeListener('pan zoom resize', this.updatePopper);
+  this.select.popper.onchange = null;
+  this.select.popper.remove();
+  this.select.destroy();
 };
 
 
