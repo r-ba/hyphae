@@ -126,7 +126,7 @@ function deleteEdge(ele) {
     mainConnectors.splice(mainConnectors.indexOf(sourceId), 1)
   }
   cy.remove(ele);
-};
+}
 
 
 /**
@@ -158,7 +158,7 @@ function deleteNode(id, type, ele) {
   }
   cy.remove(ele);
   delete NodeStore[type][id];
-};
+}
 
 
 /**

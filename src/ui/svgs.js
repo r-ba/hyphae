@@ -1,18 +1,4 @@
-function encodeSVG(svg) {
-  return 'data:image/svg+xml;utf8,' + encodeURIComponent(
-    `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-      <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-       x="0px" y="0px" width="200px" height="200px" viewBox="0 0 200 200" enable-background="new 0 0 200 200"
-       xml:space="preserve">  <image id="image0" width="200" height="200" x="0" y="0" ${svg}`);
-}
-
-function ctxSVG(svg, x = 0, y = 0) {
-  return `<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-           x="0px" y="0px" width="50px" height="50px" viewBox="0 0 50 50" enable-background="new 0 0 200 200"
-           xml:space="preserve">  <image id="image0" width="50" height="50" x="${x}" y="${y}" ${svg}`;
-}
-
+// eslint-disable-next-line no-unused-vars
 const square = `href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAQAAAAHUWYVAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
 AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QAAKqNIzIAAAAJcEhZ
 cwAALiMAAC4jAXilP3YAAAAHdElNRQfkBAIVNQsxhufaAAABRElEQVR42u3WQQrEIBAAwSTk/192
@@ -26,6 +12,7 @@ VDAxOjUzOjExLTA0OjAwuCxuRgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMC0wNC0wM1QwMTo1Mzox
 MS0wNDowMMlx1voAAAAASUVORK5CYII=" />
 </svg>`;
 
+// eslint-disable-next-line no-unused-vars
 const triangle = `href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAQAAAAHUWYVAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
 AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QAAKqNIzIAAAAJcEhZ
 cwAEESEABBEhAX1vEkQAAAAHdElNRQfkBAIVOTAsOEHyAAAKGklEQVR42u3d2VNUSRbH8W8WxaqI
@@ -79,6 +66,7 @@ iwAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMC0wNC0wM1QwMTo1Nzo0OC0wNDowMB3iPTcAAAAASUVO
 RK5CYII=" />
 </svg>`;
 
+// eslint-disable-next-line no-unused-vars
 const circle = `href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAQAAAAHUWYVAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
 AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QAAKqNIzIAAAAJcEhZ
 cwAALiMAAC4jAXilP3YAAAAHdElNRQfkBAIVOTAsOEHyAAAMHElEQVR42u2dz28VVRvHP2fmFhNC
@@ -141,6 +129,7 @@ hYsAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjAtMDQtMDNUMDE6NTc6NDgtMDQ6MDAd4j03AAAAAElF
 TkSuQmCC" />
 </svg>`;
 
+// eslint-disable-next-line no-unused-vars
 const disk = `href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAQAAAAHUWYVAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
 AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QAAKqNIzIAAAAJcEhZ
 cwAALiMAAC4jAXilP3YAAAAHdElNRQfkBAIVOTAsOEHyAAAMdUlEQVR42u2d21NURx6Avz4zwMAA

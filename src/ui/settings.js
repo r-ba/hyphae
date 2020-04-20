@@ -16,6 +16,8 @@ const cy = cytoscape({
     .selector('edge')
       .css({
         'curve-style': 'bezier',
+        'target-arrow-shape': 'triangle',
+        'target-arrow-color': 'grey',
         'line-color': 'grey',
         'width': 3
       })
@@ -89,19 +91,6 @@ cy.edgehandles({
     addedEles.data('type', 'connection');
   }
 });
-
-
-// Helper fn: used as ctxmenu selector
-const createNode = (type, center, angle) => {
-  const { x, y } = center;
-  const a = 2 * Math.PI;
-  const position = {
-    x : x - 200 * Math.cos(angle * a),
-    y : y - 200 * Math.sin(angle * a)
-  }
-
-  NodeStore.set(type, position);
-};
 
 
 /*
