@@ -38,17 +38,15 @@ const NodeStore = {
       console.error(`${type} is not a valid Node type`);
     }
   },
-  del : function(type, ele) {
-    if (type === 'node') {
-      // if (Object.prototype.hasOwnProperty.call(NodeTypes, type)) {
-        // if (this[type][id] !== undefined) {
-        //   this[type][id].delete();
-        //   delete this[type][id];
-        // } else {
-        //   console.error(`${id} does not exist in NodeStore[${type}]`);
-        // }
-      // }
-    } else if (type === 'edge') {
+  del : function(eleType, ele) {
+    if (eleType === 'node') {
+      const { id, type } = ele.data();
+      if (Object.prototype.hasOwnProperty.call(NodeTypes, type) && this[type][id] !== undefined) {
+        deleteNode(id, type, ele);
+      } else {
+        console.error(`Node ${id} does not exist in NodeStore[${type}]`);
+      }
+    } else if (eleType === 'edge') {
       deleteEdge(ele);
     } else {
       console.error(`${type} is not a valid type`);
@@ -105,10 +103,11 @@ function deleteEdge(ele) {
       NodeStore.operation[targetId].options.argv[index] = '';
       ele.target().data('connected', false);
     } else {
-      if (ele.source().data().type !== 'operation') {
+      const sourceId = ele.source().data().id;
+      const sourceType = ele.source().data().type;
+      if (sourceType !== 'operation' && sourceType !== 'connector') {
         ele.source().data('handleable', true);
-        const sourceId = ele.source().data().id;
-        const sourceType = ele.source().data().type;
+        console.log(sourceType, sourceId);
         NodeStore[sourceType][sourceId].removeParent();
       }
       ele.target().data('connected', false);
@@ -116,7 +115,7 @@ function deleteEdge(ele) {
   } else if (type === 'data') {
       const sourceId = ele.source().data().id;
       NodeStore.operation[sourceId].options.to = '';
-  } else {
+  } else if (type === 'main') {
     const sourceId = ele.source().data().id;
     const sourceType = ele.source().data().type;
     if (sourceType !== 'operation') {
@@ -127,6 +126,38 @@ function deleteEdge(ele) {
     mainConnectors.splice(mainConnectors.indexOf(sourceId), 1)
   }
   cy.remove(ele);
+};
+
+
+/**
+ * Delete a node and clean up.
+ *
+ * @param {string} id The id of the node.
+ * @param {string} type The type of node.
+ * @param {object} ele The corresponding cytoscape node.
+ */
+function deleteNode(id, type, ele) {
+  const node = NodeStore[type][id];
+  ele.connectedEdges().forEach(edge => deleteEdge(edge));
+  if (node.connectors) {
+    node.connectors.forEach(connector => {
+      connector.connectedEdges().forEach(edge => deleteEdge(edge));
+      cy.remove(connector);
+    });
+    if (node.defaultConnector) {
+      node.defaultConnector.connectedEdges().forEach(edge => deleteEdge(edge));
+      cy.remove(node.defaultConnector);
+    }
+    if (node.midPoint) {
+      node.midPoint.connectedEdges().forEach(edge => deleteEdge(edge));
+      cy.remove(node.midPoint);
+    }
+  }
+  if (type === 'operation' || type === 'data') {
+    node.destroyPopper();
+  }
+  cy.remove(ele);
+  delete NodeStore[type][id];
 };
 
 
