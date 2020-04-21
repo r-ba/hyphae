@@ -19,7 +19,7 @@ function LoopBlock(parent, statements=[], conditions=[]) {
  * evaluates to false.
  */
 LoopBlock.prototype.execute = async function() {
-  while (await this.checkCondition()) this.body.execute();
+  while (await this.checkCondition()) await this.body.execute();
 };
 
 
