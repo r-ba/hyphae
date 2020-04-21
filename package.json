@@ -15,10 +15,10 @@
     "email": "rhysbalevicius@gmail.com"
   },
   "keywords": [
-   "computational",
-   "graph",
-   "playground",
-   "experimental"
+    "computational",
+    "graph",
+    "playground",
+    "experimental"
   ],
   "engines": {
     "node": ">=13.11"
