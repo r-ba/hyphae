@@ -107,7 +107,6 @@ function deleteEdge(ele) {
       const sourceType = ele.source().data().type;
       if (sourceType !== 'operation' && sourceType !== 'connector') {
         ele.source().data('handleable', true);
-        console.log(sourceType, sourceId);
         NodeStore[sourceType][sourceId].removeParent();
       }
       ele.target().data('connected', false);
