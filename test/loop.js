@@ -86,4 +86,44 @@ describe('Loop execution:', function(){
      expect(main.scope.j).to.equal(5);
   });
 
+  it('Nested loop', async function() {
+    const main = new Block(null, { y : 1, x : 0, 1: 1, 0: 0, n: 3 });
+
+    const block = new Block(main, {}, [
+      { f : '+', argv : [ 'x', '1' ], to : 'x' }
+    ]);
+
+    const loop2 = new LoopBlock(main, [
+       block
+     ],
+     [
+       { f : '<', argv : [ 'x', 'n' ] }
+     ]);
+
+    const loop1 = new LoopBlock(main, [
+       loop2,
+       { f : '+', argv : [ 'y', '1' ], to : 'y' },
+       { f : '+', argv : [ '0', '0' ], to : 'x' }
+     ],
+     [
+       { f : '<=', argv : [ 'y', 'n' ] }
+     ]);
+
+     const expectedArray = [];
+     for (let y = 1; y <= 3; y++) {
+       for (let x = 1; x <= 3; x++) {
+         expectedArray.push([ y, x ]);
+       }
+     }
+
+     const array = [];
+     block.definePipe(() => {
+       const { x, y } = main.scope;
+       array.push([ y, x ]);
+     });
+
+     await loop1.execute();
+     expect(array).to.deep.equal(expectedArray);
+  });
+
 });
