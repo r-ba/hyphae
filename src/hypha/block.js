@@ -84,7 +84,7 @@ Block.prototype.execute = async function() {
  */
 Block.prototype.executeNext = async function(current, last) {
   if (current < last) {
-    const value = this.statements[current].execute();
+    const value = await this.statements[current].execute();
     this.pipe(value);
 
     return Promise.resolve({
